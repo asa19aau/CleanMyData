@@ -1,10 +1,22 @@
 from django.db import models
 
 class Cleaner(models.Model):
+    
+    NULL_CHOICES = [
+        ('DN', 'Do nothing'),
+        ('RV', 'Remove values'),
+        ('RA', 'Replace with avg.'),
+        ('RM', 'Replace with median'),
+    ]
+    
     id = models.AutoField(primary_key=True)
     
-    # Preferences goes here
-    remove_null_values = models.BooleanField(default=True)
+    # General data sheet goes here
+    null_values = models.CharField(max_length=2, choices=NULL_CHOICES, default='DN')
+    remove_duplicate_rows = models.BooleanField(default=False)
+    
+    
+    # Individual Columns Preferences goes here
     
     # Url API goes here
     

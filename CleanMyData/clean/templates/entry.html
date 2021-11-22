@@ -6,20 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Page</title>
 </head>
+
 <body>
-    <form action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% for entry in form %}
-           <div>
-                {{ entry.label_tag }}
-           </div>
-           <div>
-               {{entry}}
-           </div>
-        {% endfor %}
-        <button>
-            Save!
-        </button>
-    </form>
+    <div class="wrapper">
+        <form class=main action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for entry in form %}
+            <div>
+                    {{ entry.label_tag }}
+            </div>
+            <div>
+                {{entry}}
+            </div>
+            <br>
+            {% endfor %}
+            <button>
+                Upload
+            </button>
+        </form>
+    </div>
 </body>
 </html>
