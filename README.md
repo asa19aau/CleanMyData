@@ -23,12 +23,17 @@
 	```
 	python -m venv env
 	```
+	
+3. Now, activate the environment you just created.
+	```
+	env\scripts\activate
+	```
 
-3. Next, in the same directory, install the project dependencies with the following command:
-    ```
+4. Next, in the same directory, install the project dependencies with the following command:
+    	```
 	pip install -r requirements.txt
 	```
 
-4. You are now ready to start the server with the command:
+5. You are now ready to start the server with the command:
 	```
 	python manage.py runserver
