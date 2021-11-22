@@ -1,3 +1,4 @@
+
 # Welcome to CleanMyData!
 
 > All over the world, more and more data is being produced every day.
@@ -30,10 +31,11 @@
 	```
 
 4. Next, in the same directory, install the project dependencies with the following command:
-    	```
+	```
 	pip install -r requirements.txt
 	```
 
 5. You are now ready to start the server with the command:
 	```
 	python manage.py runserver
+	```
