@@ -39,3 +39,14 @@
 	```
 	python manage.py runserver
 	```
+	
+## Applying changes to, adding or deleting models
+Run the following command to make the migrations.
+```
+python manage.py makemigrations
+```
+Next, run the following command to apply the migrations.
+```
+python manage.py migrate
+```
+
