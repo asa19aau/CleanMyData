@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 from clean.models import Cleaner
 from clean.forms.form import CleanerForm

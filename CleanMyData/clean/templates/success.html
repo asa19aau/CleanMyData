@@ -1,26 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Successful</title>
-</head>
-<body>
-    <h1>SUCCESS!</h1>
+{% extends "general.html" %}
+
+{% block content %}
+    <h2>Your files were successfuly uploaded and wrangled.</h2>
+    <h4>Here you'll find all the files you've uploaded.</h4>
 
     <br>
     <br>
 
     {% for clean in cleans %}
        <div>
-            {{ clean.id }}
-       </div>
-       {% if clean.file %}
-        <div>
-            <p>{{ clean.file.url }}</p>
+            <h4>{{ clean.id }}</h4>
+
+            {% if clean.file %}
+
+            <a href="{{ clean.file.url }}">{{ clean.file.url }}</a>
+
+            {% endif %}
         </div>
-       {% endif %}
+            
+       <br><hr><br>
     {% endfor %}   
-</body>
-</html>
+
+    <a href="/"><h5>Back to frontpage</h5></a>
+{% endblock %}
