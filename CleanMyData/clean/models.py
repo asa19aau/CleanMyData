@@ -1,4 +1,5 @@
 from django.db import models
+from .validators import validate_file_extension
 
 class Cleaner(models.Model):
     
@@ -20,7 +21,7 @@ class Cleaner(models.Model):
     
     # Url API goes here
     
-    file = models.FileField(upload_to="media", null=True, blank=True)
+    file = models.FileField(upload_to="media", null=True, blank=False, validators=[validate_file_extension])
     
     def __str__(self):
         return str(self.id)
