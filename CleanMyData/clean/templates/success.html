@@ -7,19 +7,25 @@
     <br>
     <br>
 
-    {% for clean in cleans %}
+    {% for file_uploaded in files %}
        <div>
-            <h4>{{ clean.id }}</h4>
+            <br>
+            <p>File ID: {{ file_uploaded.id }} | <code>File type: {{ file_uploaded.file_extension }}</code></p>
+            <br>
 
-            {% if clean.file %}
+            {% if file_uploaded.file %}
 
-            <a href="{{ clean.file.url }}">{{ clean.file.url }}</a>
+            <a href="{{ clean.file.url }}">{{ file_uploaded.file_name }}</a>
 
             {% endif %}
         </div>
-            
-       <br><hr><br>
+        
+        {% if not forloop.last %}
+            <br><hr>
+        {% endif %}
     {% endfor %}   
 
+
+    <br><br>
     <a href="/"><h5>Back to frontpage</h5></a>
 {% endblock %}
