@@ -1,5 +1,6 @@
 from django.contrib import admin
 
-from .models import Cleaner
+from .models import File, Preferences
 
-admin.site.register(Cleaner)
+admin.site.register(File)
+admin.site.register(Preferences)

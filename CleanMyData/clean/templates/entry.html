@@ -1,6 +1,13 @@
 {% extends "general.html" %}
 
 {% block content %}
+
+    <h2>CleanMyData</h2>
+    <h4>Upload the file you wish to wrangle and you will be prompted for settings.</h4>
+
+    <br>
+    <br>
+
     <div class="wrapper">
         <form class=main action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
@@ -18,4 +25,10 @@
             </button>
         </form>
     </div>
+
+
+    <br><br>
+    <hr>
+
+    <h5><a href="/success">Go to success page</a></h5>
 {% endblock %}
