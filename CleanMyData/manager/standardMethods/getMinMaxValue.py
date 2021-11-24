@@ -4,3 +4,5 @@ import pyspark.pandas as pan
 def getMinimumValue(dataFrame: pan.DataFrame):
     return dataFrame.min()
 
+def getMaximumValue(dataFrame: pan.DataFrame):
+    return dataFrame.max()
