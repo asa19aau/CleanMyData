@@ -35,3 +35,6 @@ def preferences_view(request, pk):
     return render(request, "preferences.html", {
         "preferences": pk
     })
+
+def help_view(request):
+    return render(request, "help.html")
