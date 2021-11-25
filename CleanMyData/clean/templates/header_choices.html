@@ -1,0 +1,25 @@
+{% extends "general.html" %}
+
+{% block content %}
+
+<h1>Select your desired fields.</h1>
+<div class='grid-container'></div>
+    {% for header in header_list %}
+    <h4>{{header.id}} | {{header.name}}</h4>
+        <div id={{ header.id }}>
+            <form class=main action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="checkbox" name="{{ form.selected.name }}" {% if header.selected %} Checked {% endif %}>
+                <input type="text" name="{{ form.id.name }}" value="{{ header.id }}" style="visibility: hidden;">
+                <button>
+                    Update
+                </button>
+            </form>
+        </div>       
+        <br>
+        <hr>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

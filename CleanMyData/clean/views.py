@@ -1,21 +1,38 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
-from clean.models import File, Preferences
-from clean.forms.form import CleanerForm
+from clean.forms.form import HeaderForm
+from clean.models import File, Preferences, Header
+from clean.forms.form import FileForm
 from django.http import HttpResponseRedirect
 
-def addCleaner_view(request):
+import pyspark
+from pyspark import SparkContext
+from pyspark.sql import SparkSession
+
+
+def frontpage_view(request):
     if request.method == 'POST':
-        form = CleanerForm(request.POST, request.FILES)
+        form = FileForm(request.POST, request.FILES)
         
         if form.is_valid():
             file = form.save()
             
+            #MAKE HEADER OBJECTS
+            spark = SparkSession.builder.appName('preferences').getOrCreate()
+            df = spark.read.csv(str(file.file_path), header=True)
+            header_list = df.columns
+            
+            for header in header_list:
+                header_object = Header.objects.create(name=header, file=file, selected=True)
+                header_object.save()
+                            
+            #MAKE PREFERENCE OBJECT
             file_preferences = Preferences.objects.create(file=file)
             file_preferences.save()
             
-            return HttpResponseRedirect("/preferences/" + str(file_preferences.id)) 
+            return HttpResponseRedirect("/header-choices/" + str(file.id)) 
     else:
-        form = CleanerForm()
+        form = FileForm()
         
 
     return render(request, "entry.html", {
@@ -31,7 +48,32 @@ def success_view(request):
     
 
 def preferences_view(request, pk):
-    print(pk)
+    preferences = Preferences.objects.get(id=pk)
+    
     return render(request, "preferences.html", {
-        "preferences": pk
+        "preferences": preferences
     })
+    
+
+def headerChoice_view(request, pk):
+    headers = Header.objects.filter(file_id=pk)
+    
+    if request.method == 'POST':
+        form = HeaderForm(request.POST)
+        
+        if form.is_valid():
+            header_id = form.cleaned_data['id']
+            header_selected = form.cleaned_data['selected']
+            header = Header.objects.get(id=header_id)
+            header.selected = header_selected
+            header.save()
+            
+            return HttpResponseRedirect("/header-choices/" + str(pk)) 
+    else:
+        form = HeaderForm()
+    
+    return render(request, "header_choices.html", {
+        "form": form,
+        "header_list": headers
+    })
+    
