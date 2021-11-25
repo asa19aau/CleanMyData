@@ -51,7 +51,9 @@ def preferences_view(request, pk):
     preferences = Preferences.objects.get(id=pk)
     
     return render(request, "preferences.html", {
-
+        "preferences": pk
+    })
+    
       
 def headerChoice_view(request, pk):
     headers = Header.objects.filter(file_id=pk)
