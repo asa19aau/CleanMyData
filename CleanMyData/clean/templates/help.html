@@ -1,0 +1,34 @@
+{% extends "general.html" %}
+
+{% block content %}
+<h2 style="text-align: center;">How to use CleanMyData</h2>
+<h5 style="font: bold;">Step 1: Uploading files</h5>
+    <a>
+        Upload your files on the frontpage by pressing the "Choose files" button and choosing the correct files. Press the "Upload" button.
+        Note that it is possible to uploade multiple files at once if you wish to perform wrangling on more than one file.
+    </a>
+<h5 style="font: bold;">Step 2: Customising your preferences for NULL values</h5>
+    <a>
+        When your file(s) are uploaded, you will be taken to the Customisation page. Here, the names of your data fields will be shown. If your files contain headless data, the fields will be named "Field 1", "Field 2", etc., or you may name them yourself.
+            <br><br> 
+        On this page, you can set user preferences for how to handle NULL values and wrong values in your file(s). You can apply different standard methods for this cleaning, or you can choose to write a specific value you would like to replace NULL values with.
+            <br><br>
+        If you wish to use the general settings for the cleaning phase, you may skip this step and continue without entering specific preferences for you data.
+    </a>
+<h5 style="font: bold;">Step 3: Cleaning the data</h5>
+    <a>
+        The system cleans your data in accordance with your preferences, or in accordance with the standard cleaning methods if no preferences were chosen.
+    </a>
+<h5 style="font: bold;">Step 4: Accessing your cleaned data</h5>
+    <a>
+        ...
+    </a>
+    <div style="text-align: right;">
+        <a><i>Your Dev Team, CS-21-DAT-5-02</i></a>
+    </div>
+
+<br><br>
+<hr>
+
+<h5><a href="/">I understand, back to frontpage</a></h5>
+{% endblock %}

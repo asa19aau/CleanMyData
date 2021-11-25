@@ -2,18 +2,25 @@
 
 {% block content %}
 
-    <h2>CleanMyData</h2>
-    <h4>Upload the file you wish to wrangle and you will be prompted for settings.</h4>
-
+    <div style="text-align: right;">
+        <button>
+            <a style="text-decoration: none;" href="/help">Help</a>
+        </button>
+    </div>
+    <h2 style="text-align: center;">CleanMyData</h2>
+    <div style="text-align: center;">
+        A semester project by CS-21-DAT-5-02
+    </div>
     <br>
     <br>
-
+    <h4>Please upload the file(s) you wish to wrangle below, and you will be prompted for settings.</h4>
+    <br>
     <div class="wrapper">
         <form class=main action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {% for entry in form %}
             <div>
-                    {{ entry.label_tag }}
+                {{ entry.label_tag }}
             </div>
             <div>
                 {{entry}}
