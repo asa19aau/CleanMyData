@@ -1,4 +1,6 @@
 from pyspark.sql import SparkSession, functions as F
+import xmlReader
+import re
 
 spark = SparkSession.builder.appName('engine').getOrCreate()
 
@@ -11,29 +13,36 @@ class engine:
         elif fileType == '.tsv':
             self.dataframe = spark.read.option("delimiter", "\t").csv(filePath, header=True)
         elif fileType == '.xml':
-            pass
-            #todo: call function that reads xml document- one below doesnt work!!!
-            #self.dataframe = spark.read.format('xml').load(filePath)
-
-    def printTable(self):
-        self.dataframe.show()
+            reader = xmlReader.xmlReader(spark)
+            self.dataframe = reader.getXMLdataframe(filePath)
 
     def getColumnNames(self):
         return self.dataframe.columns
 
-    def flattenJSON(self):
-        pass
+    def flattenJSON(self, df):
+        #find which columns has nested values
+        columnTypes = df.dtypes
+        for col in columnTypes:
+            if columnTypes[col] == 'struct<>'
+
 
 test = engine('sample2.json', '.json')
 
 test.dataframe.show()
-
+print(type(test.dataframe.collect()[0][0]))
 test.dataframe.printSchema()
 
-#collapses the streetaddress attribute from the nested address attribute
-#test.dataframe.withColumn('address', F.col('address').getField('streetAddress')).show()
+test.flattenJSON(test.dataframe)
 
 #convert value in address that is a struct into a dict 
 address = test.dataframe.collect()[0][0].asDict()
 print(address)
 
+print(type(address.keys()))
+
+print([tuple(address.values())])
+newDF = test.dataframe.collect()[0]
+newDF = spark.createDataFrame([tuple(address.values())], list(address.keys()))
+test.dataframe = test.dataframe.join(newDF)
+test.dataframe = test.dataframe.drop('address')
+test.dataframe.show()
