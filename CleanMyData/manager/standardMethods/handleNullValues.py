@@ -8,4 +8,3 @@ def replaceNullWithAverage(dataFrame: pan.DataFrame):
 
 def replaceNullWithMedian(dataFrame: pan.DataFrame):
     return  dataFrame.fillna(value=median.calculateMedian(dataFrame), axis=0)
-
