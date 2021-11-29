@@ -19,8 +19,12 @@ class engine:
     def findJSONDataframes(self):
         dataframesInDocument = []
         columns = self.dataframe.columns
-        for col in columns:
-            if isinstance(self.dataframe[col][1], T.Row):
+        for x in range(len(self.dataframe.columns)):
+            name = self.dataframe.dtypes[x][0]
+            Type = self.dataframe.schema[x].dataType
+            print(f"structtype: {T.StructType}")
+            print(f"type: {Type}")
+            if isinstance(Type, T.StructType):
                 print('hello')
         return 1
 
@@ -32,6 +36,8 @@ test.dataframe.printSchema()
 
 #convert value in address that is a struct into a dict 
 address = test.dataframe.collect()[0][0].asDict()
+
+print(f"address var: \t{address}")
 
 print(type(test.dataframe.collect()[0][5]))
 print(type(test.dataframe.collect()[0][0]))
