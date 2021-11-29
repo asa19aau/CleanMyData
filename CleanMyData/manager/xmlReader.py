@@ -80,7 +80,7 @@ class xmlReader:
         """Calls the getXMLHeader and getXMLvalues functions to create a spark dataframe. Returns the spark dataframe."""
         self.getXMLHeader(filePath)
         self.getXMLvalues(filePath, len(self.header))
-        df = spark.createDataFrame(self.valueTupleArr, self.header)
+        df = self.spark.createDataFrame(self.valueTupleArr, self.header)
 
         return df
 
