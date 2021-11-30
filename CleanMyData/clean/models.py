@@ -20,14 +20,6 @@ class File(models.Model):
     def file_path(self):
         return self.file.path
 
-
-class Preferences(models.Model):
-    id = models.AutoField(primary_key=True)
-    
-    file = models.OneToOneField(File, on_delete=models.CASCADE, related_name="preferences")
-    
-    def __str__(self):
-        return str(self.id)
     
 
 class Header(models.Model):
@@ -47,7 +39,37 @@ class HeaderPreference(models.Model):
     
     header = models.OneToOneField(Header, on_delete=models.CASCADE, related_name='header_preference')
     
-    #PREFERENCES GOES HERE
+    DATA_CHOICES = [
+        ('non', 'None'),
+        ('Temperature', (
+                ('C', 'Celsius'),
+                ('F', 'Fahrenheit'),
+                ('K', 'Kelvin'),
+            )
+        ),
+        ('Distance', (
+                ('KM', 'Kilometer'),
+                ('MI', 'Mile'),
+            )
+        ),
+        ('Weight', (
+                ('KG', 'Kilogram'),
+                ('LB', 'Pound')
+            )
+        ),
+    ]
+
+    current_type = models.CharField(
+        max_length = 3,
+        choices = DATA_CHOICES,
+        default = 'non'
+    )
+    
+    desired_type = models.CharField(
+        max_length = 3,
+        choices = DATA_CHOICES,
+        default = 'non'
+    )
     
     def __str__(self):
         return f"{id}"

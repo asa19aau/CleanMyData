@@ -4,15 +4,22 @@
 
 <h1>Select your desired fields.</h1>
 <div class='grid-container'></div>
-    {% for header in header_list %}
-    <h4>{{header.id}} | {{header.name}}</h4>
+    {% for entry in header_definitions %}
+    <h4>{{entry.header.id}} | {{entry.header.name}}</h4>
         <div id={{ header.id }}>
             <form class=main action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="checkbox" name="{{ form.selected.name }}" {% if header.selected %} Checked {% endif %}>
-                <input type="text" name="{{ form.id.name }}" value="{{ header.id }}" style="visibility: hidden;">
+                {% for entry in form %}
+                <div>
+                    {{ entry.label_tag }}
+                </div>
+                <div>
+                    {{entry}}
+                </div>
+                <br>
+                {% endfor %}
                 <button>
-                    Update
+                    Upload
                 </button>
             </form>
         </div>       

@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import ModelForm, ClearableFileInput
+from clean.models import HeaderPreference
 from clean.models import Header
 from clean.models import File
 
@@ -14,3 +15,9 @@ class FileForm(ModelForm):
 class HeaderForm(forms.Form):
     selected = forms.BooleanField(required=False)
     id = forms.IntegerField()
+
+class HeaderDefinitionForm(ModelForm):
+
+    class Meta: 
+        model = HeaderPreference
+        fields = ('current_type', 'desired_type',)

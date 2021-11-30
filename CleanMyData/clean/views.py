@@ -1,7 +1,8 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render
+from clean.forms.form import HeaderDefinitionForm
 from clean.forms.form import HeaderForm
-from clean.models import File, Preferences, Header
+from clean.models import File, HeaderPreference, Header
 from clean.forms.form import FileForm
 from django.http import HttpResponseRedirect
 
@@ -24,11 +25,9 @@ def frontpage_view(request):
             
             for header in header_list:
                 header_object = Header.objects.create(name=header, file=file, selected=True)
+                header_definition = HeaderPreference.objects.create(header=header_object)
+                header_definition.save()
                 header_object.save()
-                            
-            #MAKE PREFERENCE OBJECT
-            file_preferences = Preferences.objects.create(file=file)
-            file_preferences.save()
             
             return HttpResponseRedirect("/header-choices/" + str(file.id)) 
     else:
@@ -46,13 +45,6 @@ def success_view(request):
         "files": files
     })
     
-
-def preferences_view(request, pk):
-    preferences = Preferences.objects.get(id=pk)
-    
-    return render(request, "preferences.html", {
-        "preferences": pk
-    })
     
       
 def headerChoice_view(request, pk):
@@ -74,10 +66,31 @@ def headerChoice_view(request, pk):
     
     return render(request, "header_choices.html", {
         "form": form,
-        "header_list": headers
+        "header_list": headers,
+        "file_id": pk
     })
-    
 
+
+def headerDefinition_view(request, pk):
+    headers_definitions = HeaderPreference.objects.filter(header__file_id=pk, header__selected=True) 
+
+    if request.method == 'POST':
+        form = HeaderDefinitionForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            
+            return HttpResponseRedirect("/header-choices/" + str(pk) + "/definitions") 
+    else:
+        form = HeaderDefinitionForm()
+
+    return render(request, "header_choices_definitions.html", {
+        "form": form,
+        "header_definitions": headers_definitions,
+        "file_id": pk
+    })   
+
+    
 def help_view(request):
     return render(request, "help.html")
 
