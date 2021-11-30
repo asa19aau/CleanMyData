@@ -32,16 +32,24 @@
     {% endfor %}
 </div>
 
-<a href="/header-choices/{{ file_id }}">
-    <button>
-        Go back
-    </button>
-</a>
+<div>
+    <div>
+        <a href="/header-choices/{{ file_id }}">
+            <button>
+                Go back
+            </button>
+        </a>
+    </div>
+    <div style="text-align: right">
+        <a href="{{ file_id }}/definitions">
+            <button> 
+                Continue
+            </button>
+        </a>    
+    </div>
+</div>
 
-<a href="{{ file_id }}/definitions">
-    <button> 
-        Continue
-    </button>
-</a>
+
+
 
 {% endblock %}
