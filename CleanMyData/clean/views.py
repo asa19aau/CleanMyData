@@ -10,6 +10,7 @@ import pyspark
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
+spark = SparkSession.builder.appName('preferences').getOrCreate()
 
 def frontpage_view(request):
     if request.method == 'POST':
@@ -19,7 +20,6 @@ def frontpage_view(request):
             file = form.save()
             
             #MAKE HEADER OBJECTS
-            spark = SparkSession.builder.appName('preferences').getOrCreate()
             df = spark.read.csv(str(file.file_path), header=True)
             header_list = df.columns
             
