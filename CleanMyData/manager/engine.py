@@ -17,31 +17,32 @@ class engine:
             self.dataframe = reader.getXMLDataFrame(filePath)
     
     def findJSONDataframes(self):
-        dataframesInDocument = []
+        dataframesInDocument = [self.dataframe]
         columns = self.dataframe.columns
         for x in range(len(self.dataframe.columns)):
             name = self.dataframe.dtypes[x][0]
             Type = self.dataframe.schema[x].dataType
-            print(f"structtype: {T.StructType}")
-            print(f"type: {Type}")
             if isinstance(Type, T.StructType):
-                print('hello')
-        return 1
+                nestedDFColNames = Type.fieldNames()
+                newDataframe = spark.createDataFrame([], Type)
+                newDataframe.show()
+                #append hver value i vores dataframe i løkken under
+                for y in range(self.dataframe.count()):
+                    intermediate = self.dataframe.select(name).collect()[y]
+                    intermediate = intermediate[0].asDict()
+                    intermediateNames = intermediate.keys()
+                    intermediateValues = intermediate.values()
+                    print(intermediateNames, intermediateValues)
+                    intermediateDataframe = spark.createDataFrame(intermediateValues, intermediateNames)
+                    newDataframe.union(intermediateDataframe)
+                    newDataframe.show()
+                    dataframesInDocument.append(intermediate)
+            
+        return dataframesInDocument
 
 test = engine('sample2.json', '.json')
 
 test.dataframe.show()
-print(test.dataframe.collect()[0][5])
-test.dataframe.printSchema()
-
-#convert value in address that is a struct into a dict 
-address = test.dataframe.collect()[0][0].asDict()
-
-print(f"address var: \t{address}")
-
-print(type(test.dataframe.collect()[0][5]))
-print(type(test.dataframe.collect()[0][0]))
-
 #print([tuple(address.values())])
 #newDF = test.dataframe.collect()[0]
 #newDF = spark.createDataFrame([tuple(address.values())], list(address.keys()))
