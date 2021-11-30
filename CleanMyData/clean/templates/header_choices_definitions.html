@@ -1,8 +1,12 @@
 {% extends "general.html" %}
 
 {% block content %}
-
-<h1>Select your desired fields.</h1>
+<a href="/header-choices/{{ file_id }}">
+    <button>
+        Go back
+    </button>
+</a>
+<h1>Select how you would like to convert each field.</h1>
 <div class='grid-container'></div>
     {% for entry in header_definitions %}
     <h4>{{entry.header.id}} | {{entry.header.name}}</h4>
@@ -28,8 +32,14 @@
     {% endfor %}
 </div>
 
-<a href="{{ file_id }}/definitions">
+<a href="/header-choices/{{ file_id }}">
     <button>
+        Go back
+    </button>
+</a>
+
+<a href="{{ file_id }}/definitions">
+    <button> 
         Continue
     </button>
 </a>
