@@ -1,4 +1,4 @@
-from pyspark.sql import SparkSession, types as T, functions as F
+from pyspark.sql import SparkSession, functions as F, types as T
 import xmlReader
 
 spark = SparkSession.builder.appName('engine').getOrCreate()
@@ -25,18 +25,8 @@ class engine:
             if isinstance(Type, T.StructType):
                 nestedDFColNames = Type.fieldNames()
                 newDataframe = spark.createDataFrame([], Type)
-                newDataframe.show()
-                #append hver value i vores dataframe i løkken under
-                for y in range(self.dataframe.count()):
-                    intermediate = self.dataframe.select(name).collect()[y]
-                    intermediate = intermediate[0].asDict()
-                    intermediateNames = intermediate.keys()
-                    intermediateValues = intermediate.values()
-                    print(intermediateNames, intermediateValues)
-                    intermediateDataframe = spark.createDataFrame(intermediateValues, intermediateNames)
-                    newDataframe.union(intermediateDataframe)
-                    newDataframe.show()
-                    dataframesInDocument.append(intermediate)
+                testDF = self.dataframe.withColumn(name, F.from_json(self.dataframe[x], T.MapType(T.StringType(), T.MapType.jsonValue())))
+                testDF.show()
             
         return dataframesInDocument
 
