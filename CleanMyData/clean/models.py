@@ -2,6 +2,7 @@ from django.db import models
 import json
 from .validators import validate_file_extension
 import os
+from .choices import *
 
 
 class File(models.Model):
@@ -26,7 +27,8 @@ class Header(models.Model):
     id = models.AutoField(primary_key=True)
     
     name = models.TextField()
-    file = models.ForeignKey(File, on_delete=models.CASCADE, related_name="headers")
+    file = models.ForeignKey(File, on_delete=models.CASCADE, 
+        related_name="headers")
     
     selected = models.BooleanField(default=True)
     
@@ -37,39 +39,22 @@ class Header(models.Model):
 class HeaderPreference(models.Model):
     id = models.AutoField(primary_key=True)
     
-    header = models.OneToOneField(Header, on_delete=models.CASCADE, related_name='header_preference')
+    header = models.OneToOneField(Header, on_delete=models.CASCADE, 
+        related_name='header_preference')
     
-    DATA_CHOICES = [
-        ('non', 'None'),
-        ('Temperature', (
-                ('C', 'Celsius'),
-                ('F', 'Fahrenheit'),
-                ('K', 'Kelvin'),
-            )
-        ),
-        ('Distance', (
-                ('KM', 'Kilometer'),
-                ('MI', 'Mile'),
-            )
-        ),
-        ('Weight', (
-                ('KG', 'Kilogram'),
-                ('LB', 'Pound')
-            )
-        ),
-    ]
+
 
     current_type = models.CharField(
         max_length = 3,
         choices = DATA_CHOICES,
-        default = 'non'
+        default = 'NON'
     )
     
     desired_type = models.CharField(
         max_length = 3,
         choices = DATA_CHOICES,
-        default = 'non'
+        default = 'NON'
     )
     
     def __str__(self):
-        return f"{id}"
+        return "ID: " + str(self.id) + " | HEADER: " + self.header.name + " | CURRENT: " + self.current_type + " | DESIRED: " + self.desired_type
