@@ -1,41 +1,71 @@
 from pyspark.sql import SparkSession, functions as F, types as T
 import xmlReader
+#replace module with unit conversion module when merged
+import modules.module as uc
 
 spark = SparkSession.builder.appName('engine').getOrCreate()
 
 class engine:
-    def __init__(self, filePath, fileType):
-        if fileType == '.csv':
-            self.dataframe = spark.read.csv(filePath, header=True, inferSchema=True)
-        elif fileType == '.json':
-            self.dataframe = spark.read.option("multiline","true").json(filePath)
+    def __init__(self, spark, fileModel):
+        self.spark = spark
+        
+        self.fileModel = fileModel
+
+        if self.fileModel.file_extension == '.csv':
+            self.dataframe = self.spark.read.csv(self.fileModel.file_path, header=True, inferSchema=True)
+        elif self.fileModel.file_extension == '.orc':
+            self.dataframe = self.spark.read.orc(self.fileModel.file_path)
+        elif self.fileModel.file_extension == '.parquet':
+            self.dataframe = self.spark.read.parquet(self.fileModel.file_path)
+        elif self.fileModel.file_extension == '.json':
+            self.dataframe = self.spark.read.option("multiline","true").json(self.fileModel.file_path)
             self.dataframes = self.findJSONDataframes()
+        elif self.fileModel.file_extension == '.tsv':
+            self.dataframe = self.spark.read.option("delimiter", "\t").csv(self.fileModel.file_path, header=True)
+        elif self.fileModel.file_extension == '.xml':
+            reader = xmlReader.xmlReader(self.spark)
+            self.dataframe = reader.getXMLDataFrame(self.fileModel.file_path)
+
+    def __init__(self, spark, filePath, fileType):
+        #for testing purposes
+        self.spark = spark
+
+        if fileType == '.csv':
+            self.dataframe = self.spark.read.csv(filePath, header=True, inferSchema=True)
+        elif fileType == '.orc':
+            self.dataframe = self.spark.read.orc(filePath)
+        elif fileType == '.parquet':
+            self.dataframe = self.spark.read.parquet(filePath)
+        elif fileType == '.json':
+            self.dataframe = self.spark.read.option("multiline","true").json(filePath)
+            #self.dataframes = self.findJSONDataframes()
         elif fileType == '.tsv':
-            self.dataframe = spark.read.option("delimiter", "\t").csv(filePath, header=True)
+            self.dataframe = self.spark.read.option("delimiter", "\t").csv(filePath, header=True)
         elif fileType == '.xml':
-            reader = xmlReader.xmlReader(spark)
+            reader = xmlReader.xmlReader(self.spark)
             self.dataframe = reader.getXMLDataFrame(filePath)
-    
-    def findJSONDataframes(self):
-        dataframesInDocument = [self.dataframe]
-        columns = self.dataframe.columns
-        for x in range(len(self.dataframe.columns)):
-            name = self.dataframe.dtypes[x][0]
-            Type = self.dataframe.schema[x].dataType
-            if isinstance(Type, T.StructType):
-                nestedDFColNames = Type.fieldNames()
-                newDataframe = spark.createDataFrame([], Type)
-                testDF = self.dataframe.withColumn(name, F.from_json(self.dataframe[x], T.MapType(T.StringType(), T.MapType.jsonValue())))
-                testDF.show()
-            
-        return dataframesInDocument
 
-test = engine('sample2.json', '.json')
+    def getColumnNames(self):
+        return self.dataframe.columns
 
-test.dataframe.show()
-#print([tuple(address.values())])
-#newDF = test.dataframe.collect()[0]
-#newDF = spark.createDataFrame([tuple(address.values())], list(address.keys()))
-#test.dataframe = test.dataframe.join(newDF)
-#test.dataframe = test.dataframe.drop('address')
-#test.dataframe.show()
+    def getSchema(self):
+        return self.dataframe.schema
+
+    def cleanMyData(self):
+        for header in fileModel.headers:
+            if header.header_preference.current_type == 'non':
+                pass
+            elif header.header_preference.current_type == 'Temperature':
+                pass
+            elif header.header_preference.current_type == 'Distance':
+                pass
+            elif header.header_preference.current_type == 'Weight':
+                pass
+            else:
+                pass
+
+
+test = engine(spark, "sample2.json", ".json")
+
+print(f"columns: {test.getColumnNames()}")
+print(f"schema: {test.getSchema()}")
