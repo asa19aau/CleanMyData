@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession, functions as F, types as T
 import xmlReader
 import jsonReader
-import modules.module as module
+#import modules.module as module
 
 spark = SparkSession.builder.appName('engine').getOrCreate()
 
@@ -66,7 +66,3 @@ class engine:
                 pass
 
 
-test = engine(spark, "sample2.json", ".json")
-
-print(f"columns: {test.getColumnNames()}")
-print(f"schema: {test.getSchema()}")
