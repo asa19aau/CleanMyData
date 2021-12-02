@@ -4,19 +4,35 @@
 
 <h1>Select your desired fields.</h1>
 <div class='grid-container'></div>
-    {% for entry in header_definitions %}
-    <h4>{{entry.header.id}} | {{entry.header.name}}</h4>
+    {% for definition in header_definitions %}
+    <h4>{{definition.id}} | {{definition.header.name}}</h4>
         <div id={{ header.id }}>
             <form class=main action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% for entry in form %}
-                <div>
-                    {{ entry.label_tag }}
-                </div>
-                <div>
-                    {{entry}}
-                </div>
-                <br>
+                {% for field in forms %}
+                    {% if field.name == 'id' %}
+                        <input type="text" name="{{ field.name }}" value="{{ definition.id }}" style="visibility: hidden;">
+                    {% endif %}
+                    {% if field.name == 'current_type' %}
+                        <div>
+                            <h5>CURRENTLY SELECTED TYPE: {{ definition.get_current_type_display }}</h5>
+                            <p>Pick another:</p>
+                        </div>
+                        <div>
+                            {{field}}
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if field.name == 'desired_type' %}
+                        <div>
+                            <h5>CURRENTLY DESIRED TYPE: {{ definition.get_desired_type_display }}</h5>
+                            <p>Pick another:</p>
+                        </div>
+                        <div>
+                            {{field}}
+                        </div>
+                        <br>
+                    {% endif %}
                 {% endfor %}
                 <button>
                     Upload

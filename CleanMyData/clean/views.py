@@ -78,14 +78,22 @@ def headerDefinition_view(request, pk):
         form = HeaderDefinitionForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            definition_id = form.cleaned_data['id']
+            definition_current = form.cleaned_data['current_type']
+            definition_desired = form.cleaned_data['desired_type']
+            defintion = HeaderPreference.objects.get(id=definition_id)
+            print(defintion)
+            defintion.current_type = definition_current
+            defintion.desired_type = definition_desired
+            defintion.save()
+            print(defintion)
             
             return HttpResponseRedirect("/header-choices/" + str(pk) + "/definitions") 
     else:
         form = HeaderDefinitionForm()
 
     return render(request, "header_choices_definitions.html", {
-        "form": form,
+        "forms": form,
         "header_definitions": headers_definitions,
         "file_id": pk
     })   
