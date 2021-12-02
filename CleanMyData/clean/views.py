@@ -73,9 +73,9 @@ def headerChoice_view(request, pk):
             header = Header.objects.get(id=data['id'])
             print(header.header_preference.null_choice_string)
             header.selected = data['selected']
-            header.header_preference.null_choice_num = data['null_num'] if data['null_num'] != '' else test('1')
-            header.header_preference.null_choice_string = data['null_string'] if data['null_string'] != '' else test('2')
-            header.header_preference.null_choice_date = data['null_date'] if data['null_date'] != '' else test('3')
+            header.header_preference.null_choice_num = data['null_num'] if data['null_num'] != '' else None
+            header.header_preference.null_choice_string = data['null_string'] if data['null_string'] != '' else None
+            header.header_preference.null_choice_date = data['null_date'] if data['null_date'] != '' else None
             header.header_preference.save()
             header.save()
             header = Header.objects.get(id=data['id'])
@@ -92,11 +92,6 @@ def headerChoice_view(request, pk):
         "file_id": pk
     })
 
-
-
-def test(d):
-    print("I AM HERE HELP HELP HELP" + d)
-    return None
     
 def help_view(request):
     return render(request, "help.html")
