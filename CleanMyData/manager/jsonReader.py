@@ -5,19 +5,19 @@ class jsonReader:
         self.spark = spark
         self.dataframe = dataframe
 
-        def findJSONDataframes(self):
-            dataframesInDocument = [self.dataframe]
-            columns = self.dataframe.columns
-            for x in range(len(self.dataframe.columns)):
-                name = self.dataframe.dtypes[x][0]
-                Type = self.dataframe.schema[x].dataType
-                if isinstance(Type, T.StructType):
-                    nestedDFColNames = Type.fieldNames()
-                    newDataframe = spark.createDataFrame([], Type)
-                    testDF = self.dataframe.withColumn(name, F.from_json(self.dataframe[x], T.MapType(T.StringType(), T.MapType.jsonValue())))
-                    testDF.show()
+    def findJSONDataframes(self):
+        dataframesInDocument = [self.dataframe]
+        columns = self.dataframe.columns
+        for x in range(len(self.dataframe.columns)):
+            name = self.dataframe.dtypes[x][0]
+            Type = self.dataframe.schema[x].dataType
+            if isinstance(Type, T.StructType):
+                nestedDFColNames = Type.fieldNames()
+                newDataframe = spark.createDataFrame([], Type)
+                testDF = self.dataframe.withColumn(name, F.from_json(self.dataframe[x], T.MapType(T.StringType(), T.MapType.jsonValue())))
+                testDF.show()
 
-            return dataframesInDocument
+        return dataframesInDocument
 
 spark = SparkSession.builder.getOrCreate()
 

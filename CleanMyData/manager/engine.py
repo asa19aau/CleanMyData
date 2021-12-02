@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession, functions as F, types as T
 import xmlReader
-#replace module with unit conversion module when merged
-import modules.module as uc
+import jsonReader
+import modules.module as module
 
 spark = SparkSession.builder.appName('engine').getOrCreate()
 
@@ -18,8 +18,9 @@ class engine:
         elif self.fileModel.file_extension == '.parquet':
             self.dataframe = self.spark.read.parquet(self.fileModel.file_path)
         elif self.fileModel.file_extension == '.json':
+            reader = jsonReader()
             self.dataframe = self.spark.read.option("multiline","true").json(self.fileModel.file_path)
-            self.dataframes = self.findJSONDataframes()
+            self.dataframes = self.reader.findJSONDataframes()
         elif self.fileModel.file_extension == '.tsv':
             self.dataframe = self.spark.read.option("delimiter", "\t").csv(self.fileModel.file_path, header=True)
         elif self.fileModel.file_extension == '.xml':
