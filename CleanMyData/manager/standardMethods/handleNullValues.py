@@ -1,5 +1,4 @@
 import pyspark.pandas as pan, average, median
-import os
 
 def deleteNullValues(dataFrame: pan.DataFrame):
     return dataFrame.dropna(axis=0)
@@ -9,4 +8,3 @@ def replaceNullWithAverage(dataFrame: pan.DataFrame):
 
 def replaceNullWithMedian(dataFrame: pan.DataFrame):
     return  dataFrame.fillna(value=median.calculateMedian(dataFrame), axis=0)
-
