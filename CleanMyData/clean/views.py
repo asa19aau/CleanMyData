@@ -82,11 +82,10 @@ def headerDefinition_view(request, pk):
             definition_current = form.cleaned_data['current_type']
             definition_desired = form.cleaned_data['desired_type']
             defintion = HeaderPreference.objects.get(id=definition_id)
-            print(defintion)
+            
             defintion.current_type = definition_current
             defintion.desired_type = definition_desired
             defintion.save()
-            print(defintion)
             
             return HttpResponseRedirect("/header-choices/" + str(pk) + "/definitions") 
     else:
