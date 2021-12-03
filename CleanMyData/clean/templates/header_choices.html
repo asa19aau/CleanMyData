@@ -25,38 +25,52 @@
                             <div>
                                 <p>Handling null values by: </p>
                                 
-                                <input type="radio" name="null_num" id="null-num" value="nothing" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'nothing' %} Checked {% endif %}>
+                                <input type="radio" name="null_num" id="null-num" value="nothing" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'nothing' %} Checked {% endif %}>
                                 <label for="null-num">Nothing</label>
     
-                                <input type="radio" name="null_num" id="null-num" value="remove-tuples" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'remove-tuples' %} Checked {% endif %}>
+                                <input type="radio" name="null_num" id="null-num" value="remove-tuples" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'remove-tuples' %} Checked {% endif %}>
                                 <label for="null-num">Remove tuples</label>
                                 
                                 <input type="radio" name="null_num" id="null-num" value="replace" onchange="eventReplaceClick('replace-null-num-{{ header.id }}')" 
-                                    {% if header.header_preference.null_choice_string == 'Avg' %} Checked
-                                    {% elif header.header_preference.null_choice_string == 'Med' %} Checked
-                                    {% elif header.header_preference.null_choice_string == 'Min' %} Checked
-                                    {% elif header.header_preference.null_choice_string == 'Max' %} Checked
-                                    {% elif header.header_preference.null_choice_string == 'Custom' %} Checked
+                                    {% if header.header_preference.null_choice_num == 'Avg' %} Checked
+                                    {% elif header.header_preference.null_choice_num == 'Med' %} Checked
+                                    {% elif header.header_preference.null_choice_num == 'Min' %} Checked
+                                    {% elif header.header_preference.null_choice_num == 'Max' %} Checked
+                                    {% elif header.header_preference.null_choice_num == 'Cus' %} Checked
                                     {% endif %}
                                 >
-                                <label for="null-num">Replace</label>
+                                <label for="">Replace</label>
                             </div>
     
-                            <div class="notChosen" id="replace-null-num-{{ header.id }}">
+                            <div class="
+                            {% if header.header_preference.null_choice_num == 'Avg' %}
+                            chosen
+                            {% elif header.header_preference.null_choice_num == 'Med' %}
+                            chosen
+                            {% elif header.header_preference.null_choice_num == 'Min' %}
+                            chosen
+                            {% elif header.header_preference.null_choice_num == 'Max' %}
+                            chosen
+                            {% elif header.header_preference.null_choice_num == 'Cus' %}
+                            chosen
+                            {% else %}
+                            notChosen
+                            {% endif %}
+                            " id="replace-null-num-{{ header.id }}">
                                 <p>Replace with: </p>
-                                <input type="radio" name="replace_num" id="replace-num" value="Avg" onchange="this.form.submit()">
+                                <input type="radio" name="replace_num" id="replace-num" value="Avg" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'Avg' %} Checked {% endif %}>
                                 <label for="replace-num">Average</label>
     
-                                <input type="radio" name="replace_num" id="replace-num" value="Med" onchange="this.form.submit()">
+                                <input type="radio" name="replace_num" id="replace-num" value="Med" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'Med' %} Checked {% endif %}>
                                 <label for="replace-num">Median</label>
                                 
-                                <input type="radio" name="replace_num" id="replace-num" value="Min" onchange="this.form.submit()">
+                                <input type="radio" name="replace_num" id="replace-num" value="Min" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'Min' %} Checked {% endif %}>
                                 <label for="replace-num">Minimum</label>
     
-                                <input type="radio" name="replace_num" id="replace-num" value="Max" onchange="this.form.submit()">
+                                <input type="radio" name="replace_num" id="replace-num" value="Max" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'Max' %} Checked {% endif %}>
                                 <label for="replace-num">Maximum</label>
     
-                                <input type="radio" name="replace_num" id="replace-num" value="Custom" onchange="this.form.submit()">
+                                <input type="radio" name="replace_num" id="replace-num" value="Cus" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'Cus' %} Checked {% endif %}>
                                 <label for="replace-num">Custom</label>
                             </div>
                         </div>
@@ -78,9 +92,15 @@
                                 <label for="null-string">Replace</label>
                             </div>
     
-                            <div class="notChosen" id="replace-null-string-{{ header.id }}">
+                            <div class="
+                            {% if header.header_preference.null_choice_string == 'Cus' %}
+                            chosen
+                            {% else %}
+                            notChosen
+                            {% endif %}
+                            " id="replace-null-string-{{ header.id }}">
                                 <p>Replace with: </p>
-                                <input type="radio" name="replace_string" id="replace-string" value="Custom" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'Cus' %} Checked {% endif %}>
+                                <input type="radio" name="replace_string" id="replace-string" value="Cus" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'Cus' %} Checked {% endif %}>
                                 <label for="replace-string">Custom</label>
                             </div>
                         </div>
@@ -99,19 +119,27 @@
                                 <label for="null-date">Remove tuples</label>
                                 
                                 <input type="radio" name="null_date" id="null-date" value="replace" onchange="eventReplaceClick('replace-null-date-{{ header.id }}')" 
-                                    {% if header.header_preference.null_choice_date == 'Current' %} Checked
-                                    {% elif header.header_preference.null_choice_date == 'Custom' %} Checked 
+                                    {% if header.header_preference.null_choice_date == 'Now' %} Checked
+                                    {% elif header.header_preference.null_choice_date == 'Cus' %} Checked 
                                     {% endif %}>
                                 <label for="null-date">Replace</label>
                             </div>
 
-                            <div class="notChosen" id="replace-null-date-{{ header.id }}">
+                            <div class="
+                            {% if header.header_preference.null_choice_date == 'Now' %}
+                            chosen
+                            {% elif header.header_preference.null_choice_date == 'Cus' %}
+                            chosen
+                            {% else %}
+                            notChosen
+                            {% endif %}
+                            " id="replace-null-date-{{ header.id }}">
                                 <p>Replace with: </p>
 
-                                <input type="radio" name="replace_date" id="replace-date" value="Current" onchange="this.form.submit()" {% if header.header_preference.null_choice_date == 'Current' %} Checked {% endif %}>
+                                <input type="radio" name="replace_date" id="replace-date" value="Now" onchange="this.form.submit()" {% if header.header_preference.null_choice_date == 'Now' %} Checked {% endif %}>
                                 <label for="replace-date">Current date: {% now "SHORT_DATE_FORMAT" %}</label>
 
-                                <input type="radio" name="replace_date" id="replace-date" value="Custom" onchange="this.form.submit()" {% if header.header_preference.null_choice_date == 'Custom' %} Checked {% endif %}>
+                                <input type="radio" name="replace_date" id="replace-date" value="Cus" onchange="this.form.submit()" {% if header.header_preference.null_choice_date == 'Cus' %} Checked {% endif %}>
                                 <label for="replace-date">Custom date</label>
                             </div>
                         </div>

@@ -26,7 +26,7 @@ def frontpage_view(request):
             for header in header_list:
                 # type=dict(df.dtypes)[header] Sets the type to be the columns data type.
                 # Only seems to output string though.
-                header_object = Header.objects.create(name=header, file=file, selected=True, type=dict(df.dtypes)[header])
+                header_object = Header.objects.create(name=header, file=file, selected=True, type='number') #type=dict(df.dtypes)[header]  |  num, string, date
                 header_definition = HeaderPreference.objects.create(header=header_object)
                 header_definition.save()
                 header_object.save()
@@ -73,9 +73,43 @@ def headerChoice_view(request, pk):
             header = Header.objects.get(id=data['id'])
             print(header.header_preference.null_choice_string)
             header.selected = data['selected']
-            header.header_preference.null_choice_num = data['null_num'] if data['null_num'] != '' else None
-            header.header_preference.null_choice_string = data['null_string'] if data['null_string'] != '' else None
-            header.header_preference.null_choice_date = data['null_date'] if data['null_date'] != '' else None
+
+
+            if data['null_num'] != '':
+                if data['replace_num'] != 'replace':
+                    header.header_preference.null_choice_num = data['null_num']
+                    data['replace'] = ''
+
+                if data['null_num'] == 'replace':
+                    header.header_preference.null_choice_num = data['replace_num']
+
+                else:
+                    data['null_num'] = None
+
+
+            if data['null_string'] != '':
+                if data['replace_string'] != 'replace':
+                    header.header_preference.null_choice_string = data['null_string']
+                    data['replace_string'] = ''
+
+                if data['null_string'] != 'replace':
+                    header.header_preference.null_choice_string = data['replace_string']
+
+                else:
+                    data['null_string'] = None
+
+
+            if data['null_date'] != '':
+                if data['replace_date'] != 'replace':
+                    header.header_preference.null_choice_date = data['null_date']
+                    data['replace'] = ''
+
+                if data['null_date'] == 'replace':
+                    header.header_preference.null_choice_date = data['replace_date']
+
+                else:
+                    data['null_date'] = None
+
             header.header_preference.save()
             header.save()
             header = Header.objects.get(id=data['id'])
