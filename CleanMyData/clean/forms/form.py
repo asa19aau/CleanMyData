@@ -14,14 +14,22 @@ class FileForm(ModelForm):
         
         
 class HeaderForm(forms.Form):
+    id = forms.IntegerField()
+
     selected = forms.BooleanField(required=False)
-    id = forms.IntegerField()
 
-class HeaderDefinitionForm(ModelForm):
-    id = forms.IntegerField()
+    # Handling of null in num
+    null_num = forms.CharField(max_length=30, required=False)
+    replace_num = forms.CharField(max_length=30, required=False)
 
-    class Meta: 
-        model = HeaderPreference
-        fields = ('current_type', 'desired_type',)
+
+    # Handling of null in string
+    null_string = forms.CharField(max_length=30, required=False)
+    replace_string = forms.CharField(max_length=30, required=False)
+
+    # Handling of null in date
+    null_date = forms.CharField(max_length=30, required=False)
+    replace_date = forms.CharField(max_length=30, required=False)
+
 
 

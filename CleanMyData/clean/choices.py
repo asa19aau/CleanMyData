@@ -17,3 +17,36 @@ DATA_CHOICES = [
         )
     ),
 ]
+
+
+NULL_CHOICES_NUM = [
+    ('nothing', 'Nothing'),
+    ('remove-tuples', 'Remove tuples'),
+
+    # Replace
+    ('Avg', 'Average'),
+    ('Med', 'Median'),
+    ('Min', 'Minimum'),
+    ('Max', 'Maximum'),
+    ('Cus', 'Custom value'),
+]
+
+
+NULL_CHOICES_STRING = [
+    ('nothing', 'Nothing'),
+    ('remove-tuples', 'Remove tuples'),
+
+    # Replace
+    ('Cus', 'Custom string'),
+
+]
+
+
+NULL_CHOICES_DATE = [
+    ('nothing', 'Nothing'),
+    ('remove-tuples', 'Remove tuples'),
+
+    # Replace
+    ('Now', 'Current date'),
+    ('Cus', 'Custom date'),
+]

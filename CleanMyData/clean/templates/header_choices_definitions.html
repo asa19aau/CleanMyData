@@ -37,9 +37,39 @@
                         </div>
                         <br>
                     {% endif %}
+                    {% if field.name == 'null_choice_num' %}
+                        <div>
+                            <h5>null_choice_num: {{ definition.get_null_choice_num_display }}</h5>
+                            <p>Pick another:</p>
+                        </div>
+                        <div>
+                            {{field}}
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if field.name == 'null_choice_string' %}
+                        <div>
+                            <h5>null_choice_string: {{ definition.get_null_choice_string_display }}</h5>
+                            <p>Pick another:</p>
+                        </div>
+                        <div>
+                            {{field}}
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if field.name == 'null_choice_date' %}
+                        <div>
+                            <h5>null_choice_date: {{ definition.get_null_choice_date_display }}</h5>
+                            <p>Pick another:</p>
+                        </div>
+                        <div>
+                            {{field}}
+                        </div>
+                        <br>
+                    {% endif %}
                 {% endfor %}
                 <button>
-                    Upload
+                    Update
                 </button>
             </form>
         </div>       

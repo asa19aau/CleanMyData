@@ -1,6 +1,5 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render
-from clean.forms.form import HeaderDefinitionForm
 from clean.forms.form import HeaderForm
 from clean.models import File, HeaderPreference, Header
 from clean.forms.form import FileForm
@@ -9,6 +8,7 @@ from django.http import HttpResponseRedirect
 import pyspark
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
 
 spark = SparkSession.builder.appName('preferences').getOrCreate()
 
@@ -24,10 +24,13 @@ def frontpage_view(request):
             header_list = df.columns
             
             for header in header_list:
-                header_object = Header.objects.create(name=header, file=file, selected=True)
+                # type=dict(df.dtypes)[header] Sets the type to be the columns data type.
+                # Only seems to output string though.
+                header_object = Header.objects.create(name=header, file=file, selected=True, type=dict(df.dtypes)[header])
                 header_definition = HeaderPreference.objects.create(header=header_object)
                 header_definition.save()
                 header_object.save()
+
             
             return HttpResponseRedirect("/header-choices/" + str(file.id)) 
     else:
@@ -54,11 +57,30 @@ def headerChoice_view(request, pk):
         form = HeaderForm(request.POST)
         
         if form.is_valid():
-            header_id = form.cleaned_data['id']
-            header_selected = form.cleaned_data['selected']
-            header = Header.objects.get(id=header_id)
-            header.selected = header_selected
+            data = {
+                "id": form.cleaned_data['id'],
+                "selected": form.cleaned_data['selected'],
+                'null_num': form.cleaned_data['null_num'],
+                'replace_num': form.cleaned_data['replace_num'],
+                'null_string': form.cleaned_data['null_string'],
+                'replace_string': form.cleaned_data['replace_string'],
+                'null_date': form.cleaned_data['null_date'],
+                'replace_date': form.cleaned_data['replace_date'],
+            }
+            
+            print(data)
+
+            header = Header.objects.get(id=data['id'])
+            print(header.header_preference.null_choice_string)
+            header.selected = data['selected']
+            header.header_preference.null_choice_num = data['null_num'] if data['null_num'] != '' else None
+            header.header_preference.null_choice_string = data['null_string'] if data['null_string'] != '' else None
+            header.header_preference.null_choice_date = data['null_date'] if data['null_date'] != '' else None
+            header.header_preference.save()
             header.save()
+            header = Header.objects.get(id=data['id'])
+ 
+            
             
             return HttpResponseRedirect("/header-choices/" + str(pk)) 
     else:
@@ -69,33 +91,6 @@ def headerChoice_view(request, pk):
         "header_list": headers,
         "file_id": pk
     })
-
-
-def headerDefinition_view(request, pk):
-    headers_definitions = HeaderPreference.objects.filter(header__file_id=pk, header__selected=True) 
-
-    if request.method == 'POST':
-        form = HeaderDefinitionForm(request.POST)
-
-        if form.is_valid():
-            definition_id = form.cleaned_data['id']
-            definition_current = form.cleaned_data['current_type']
-            definition_desired = form.cleaned_data['desired_type']
-            defintion = HeaderPreference.objects.get(id=definition_id)
-            
-            defintion.current_type = definition_current
-            defintion.desired_type = definition_desired
-            defintion.save()
-            
-            return HttpResponseRedirect("/header-choices/" + str(pk) + "/definitions") 
-    else:
-        form = HeaderDefinitionForm()
-
-    return render(request, "header_choices_definitions.html", {
-        "forms": form,
-        "header_definitions": headers_definitions,
-        "file_id": pk
-    })   
 
     
 def help_view(request):
