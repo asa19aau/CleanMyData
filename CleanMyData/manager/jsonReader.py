@@ -19,11 +19,11 @@ class jsonReader:
 
         return dataframesInDocument
 
-spark = SparkSession.builder.getOrCreate()
+#spark = SparkSession.builder.getOrCreate()
 
-test = jsonReader(spark, spark.read.option("multiline","true").json("sample2.json"))
+#test = jsonReader(spark, spark.read.option("multiline","true").json("sample2.json"))
 
-test.dataframe.show()
+#test.dataframe.show()
 #print([tuple(address.values())])
 #newDF = test.dataframe.collect()[0]
 #newDF = spark.createDataFrame([tuple(address.values())], list(address.keys()))
