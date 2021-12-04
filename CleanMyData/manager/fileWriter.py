@@ -2,7 +2,6 @@ import pyspark.pandas as pan
 
 def fileWriter(spark, filePath, fileExtension, dataframe):
     panDf = dataframe.toPandas()
-    print(filePath)
     if fileExtension == '.csv':
         panDf = dataframe.toPandas()
         panDf.to_csv(filePath)
