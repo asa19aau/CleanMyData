@@ -8,9 +8,10 @@ from django.http import HttpResponseRedirect
 import pyspark
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
+
 
 spark = SparkSession.builder.appName('preferences').getOrCreate()
+
 
 def frontpage_view(request):
     if request.method == 'POST':
@@ -20,23 +21,20 @@ def frontpage_view(request):
             file = form.save()
             
             #MAKE HEADER OBJECTS
-            df = spark.read.csv(str(file.file_path), header=True)
+            df = spark.read.json(str(file.file_path)) #REPLACE THIS WITH ANDREAS & MADS ENGINE/LOADER
             header_list = df.columns
+            df.printSchema()
             
             for header in header_list:
-                # type=dict(df.dtypes)[header] Sets the type to be the columns data type.
-                # Only seems to output string though.
-                header_object = Header.objects.create(name=header, file=file, selected=True, type='number') #type=dict(df.dtypes)[header]  |  num, string, date
+                header_object = Header.objects.create(name=header, file=file, selected=True, type=dict(df.dtypes)[header]) #type=dict(df.dtypes)[header]  |  num, string, date
                 header_definition = HeaderPreference.objects.create(header=header_object)
                 header_definition.save()
                 header_object.save()
-
             
             return HttpResponseRedirect("/header-choices/" + str(file.id)) 
     else:
         form = FileForm()
         
-
     return render(request, "entry.html", {
         "form": form
     })
@@ -47,7 +45,6 @@ def success_view(request):
     return render(request, "success.html", {
         "files": files
     })
-    
     
       
 def headerChoice_view(request, pk):
@@ -68,12 +65,9 @@ def headerChoice_view(request, pk):
                 'replace_date': form.cleaned_data['replace_date'],
             }
             
-            print(data)
-
             header = Header.objects.get(id=data['id'])
             print(header.header_preference.null_choice_string)
             header.selected = data['selected']
-
 
             if data['null_num'] != '':
                 if data['replace_num'] != 'replace':
@@ -86,7 +80,6 @@ def headerChoice_view(request, pk):
                 else:
                     data['null_num'] = None
 
-
             if data['null_string'] != '':
                 if data['replace_string'] != 'replace':
                     header.header_preference.null_choice_string = data['null_string']
@@ -97,7 +90,6 @@ def headerChoice_view(request, pk):
 
                 else:
                     data['null_string'] = None
-
 
             if data['null_date'] != '':
                 if data['replace_date'] != 'replace':
@@ -113,8 +105,6 @@ def headerChoice_view(request, pk):
             header.header_preference.save()
             header.save()
             header = Header.objects.get(id=data['id'])
- 
-            
             
             return HttpResponseRedirect("/header-choices/" + str(pk)) 
     else:
@@ -129,4 +119,3 @@ def headerChoice_view(request, pk):
     
 def help_view(request):
     return render(request, "help.html")
-
