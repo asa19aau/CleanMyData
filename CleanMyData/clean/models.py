@@ -39,17 +39,20 @@ class Header(models.Model):
     @property
     def is_num(self):
         # Include more checks once we know the different data types
-        return self.type == 'number'
+        number_types = ['bigint']
+        return self.type in number_types
     
     @property
     def is_string(self):
         # Include more checks once we know the different data types
-        return self.type == 'string'
+        string_types = ['string']
+        return self.type in string_types
 
     @property
     def is_date(self):
         # Include more checks once we know the different data types
-        return self.type == 'date'
+        date_types = ['date']
+        return self.type in date_types
 
 class HeaderPreference(models.Model):
     id = models.AutoField(primary_key=True)
