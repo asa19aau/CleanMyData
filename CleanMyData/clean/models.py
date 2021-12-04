@@ -8,6 +8,7 @@ from .choices import *
 class File(models.Model):
     id = models.AutoField(primary_key=True)
     file = models.FileField(upload_to="media", null=True, blank=False, validators=[validate_file_extension])
+    is_wrangled = models.BooleanField(default=False)
     
     @property
     def file_name(self):

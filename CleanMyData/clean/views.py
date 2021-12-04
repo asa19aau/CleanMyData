@@ -20,9 +20,6 @@ def frontpage_view(request):
         
         if form.is_valid():
             file_form = form.save()
-            print("----------------------------------------------------------------------------------")
-            print(file_form.file_name)
-            
 
             #MAKE HEADER OBJECTS
             engine = Engine(spark=spark, fileModel=file_form)
@@ -45,7 +42,15 @@ def frontpage_view(request):
     
 
 def success_view(request):
-    files = File.objects.order_by('id')
+    files = File.objects.order_by('-id')
+
+    #DO THIS ASYNC PLEASE
+    for file in files:
+        if file.is_wrangled == False:
+            engine = Engine(spark, file)
+            engine.cleanMyData()
+            file.is_wrangled == True
+
     return render(request, "success.html", {
         "files": files
     })
