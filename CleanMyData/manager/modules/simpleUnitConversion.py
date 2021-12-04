@@ -1,5 +1,5 @@
 import pyspark.pandas as pan
-from CleanMyData.manager.modules.module import Module
+from .module import Module
 
 class SimpleUnitConversion(Module): 
 ## Temperature unit ##

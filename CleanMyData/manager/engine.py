@@ -1,8 +1,10 @@
 from pyspark.sql import DataFrame
+import pyspark.pandas as pan
 from clean.models import File, Header
 from .fileReader import *
+from .fileWriter import *
 #from CleanMyData.clean.models import File
-import modules.simpleUnitConversion as uc
+from .modules.simpleUnitConversion import *
 
 
 class Engine:
@@ -25,26 +27,26 @@ class Engine:
     def cleanMyData(self):
         #TODO: add logic when modules can be merged
         file_headers = Header.objects.filter(file=self.file)
+        panDataframe = self.dataframe.toPandas()
+        uc = simpleUnitConversion()
         for header in file_headers:
             currentType = header.header_preference.current_type
             desiredType = header.header_preference.desired_type
             if currentType == 'non':
                 pass
             elif currentType == 'C' or currentType == 'K' or currentType == 'F':
-                self.dataframe.select(header.name) = \
-                        temperatureConversion(self.dataframe.select(header.name), \
+                panDataframe[header.name] = uc.temperatureConversion(panDataframe[header.name], \
                         currentType, desiredType)
             elif currentType == 'KM' or currentType == 'MI':
-                self.dataframe.select(header.name) = \
-                        distanceConversion(self.dataframe.select(header.name), \
+                 panDataframe[header.name] = uc.distanceConversion(panDataframe[header.name], \
                         currentType, desiredType)
             elif currentType == 'KG' or currentType == 'LB':
-                self.dataframe.select(header.name) = \
-                        weightConversion(self.dataframe.select(header.name), \
+                panDataframe[header.name] = uc.weightConversion(panDataframe[header.name], \
                         currentType, desiredType)
             else:
                 pass
-
+        self.dataframe = self.spark.createDataFrame(panDataframe)
+        fileWriter(self.spark, self.file.file_path, self.file.file_extension, self.dataframe)
 
 
     def unifyDataframes(self, firstFile, secondFile):
