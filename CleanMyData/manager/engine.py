@@ -1,5 +1,5 @@
 from pyspark.sql import DataFrame
-from clean.models import File
+from clean.models import File, Header
 from .fileReader import *
 #from CleanMyData.clean.models import File
 #import modules.module as module
@@ -24,7 +24,8 @@ class Engine:
 
     def cleanMyData(self):
         #TODO: add logic when modules can be merged
-        for header in self.file.headers:
+        file_headers = Header.objects.filter(file=self.file)
+        for header in file_headers:
             if header.header_preference.current_type == 'non':
                 pass
             elif header.header_preference.current_type == 'Temperature':

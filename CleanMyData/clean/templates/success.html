@@ -11,6 +11,7 @@
        <div>
             <br>
             <p>File ID: {{ file_uploaded.id }} | <code>File type: {{ file_uploaded.file_extension }}</code></p>
+            <p>is_wrangled: {{ file_uploaded.is_wrangled }}</p>
             <br>
 
             {% if file_uploaded.file %}
