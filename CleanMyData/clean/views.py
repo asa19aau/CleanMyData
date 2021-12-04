@@ -1,5 +1,6 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render
+from manager.engine import Engine
 from clean.forms.form import HeaderForm
 from clean.models import File, HeaderPreference, Header
 from clean.forms.form import FileForm
@@ -18,20 +19,23 @@ def frontpage_view(request):
         form = FileForm(request.POST, request.FILES)
         
         if form.is_valid():
-            file = form.save()
+            file_form = form.save()
+            print("----------------------------------------------------------------------------------")
+            print(file_form.file_name)
             
+
             #MAKE HEADER OBJECTS
-            df = spark.read.json(str(file.file_path)) #REPLACE THIS WITH ANDREAS & MADS ENGINE/LOADER
-            header_list = df.columns
-            df.printSchema()
+            engine = Engine(spark=spark, fileModel=file_form)
+            columns = engine.getColumnNames()
+            print(engine.getSchema())
             
-            for header in header_list:
-                header_object = Header.objects.create(name=header, file=file, selected=True, type=dict(df.dtypes)[header]) #type=dict(df.dtypes)[header]  |  num, string, date
+            for header in columns:
+                header_object = Header.objects.create(name=header, file=file_form, selected=True, type=dict(engine.dataframe.dtypes)[header]) #type=dict(df.dtypes)[header]  |  num, string, date
                 header_definition = HeaderPreference.objects.create(header=header_object)
                 header_definition.save()
                 header_object.save()
             
-            return HttpResponseRedirect("/header-choices/" + str(file.id)) 
+            return HttpResponseRedirect("/header-choices/" + str(file_form.id)) 
     else:
         form = FileForm()
         
@@ -104,7 +108,6 @@ def headerChoice_view(request, pk):
 
             header.header_preference.save()
             header.save()
-            header = Header.objects.get(id=data['id'])
             
             return HttpResponseRedirect("/header-choices/" + str(pk)) 
     else:
