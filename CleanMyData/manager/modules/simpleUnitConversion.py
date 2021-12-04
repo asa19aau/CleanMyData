@@ -4,29 +4,29 @@ from CleanMyData.manager.modules.module import Module
 class SimpleUnitConversion(Module): 
 ## Temperature unit ##
     def temperatureConversion(dataFrame: pan.DataFrame, currentUnit: str, expectedUnit: str):
-        if (currentUnit == "Celsius") and (expectedUnit == "Fahrenheit"): 
+        if (currentUnit == "C") and (expectedUnit == "F"): 
             return dataFrame.mul(other=9/5).add(other=32)
-        elif (currentUnit == "Celsius") and (expectedUnit == "Kelvin"): 
+        elif (currentUnit == "C") and (expectedUnit == "K"): 
             return dataFrame.add(other=273.15)
 
-        elif (currentUnit == "Fahrenheit") and (expectedUnit == "Celsius"): 
+        elif (currentUnit == "F") and (expectedUnit == "C"): 
             return dataFrame.sub(other=32).mul(other=(5/9))
-        elif (currentUnit == "Fahrenheit") and (expectedUnit == "Kelvin"): 
+        elif (currentUnit == "F") and (expectedUnit == "K"): 
             df = dataFrame.sub(other=32).mul(other=(5/9))
             return df.add(other=275.15)  
 
-        elif (currentUnit == "Kelvin") and (expectedUnit == "Celsius"): 
+        elif (currentUnit == "K") and (expectedUnit == "C"): 
             return dataFrame.sub(other=273.15)
-        elif (currentUnit == "Kelvin") and (expectedUnit == "Fahrenheit"): 
+        elif (currentUnit == "K") and (expectedUnit == "F"): 
             df = dataFrame.sub(other=275.15)
             return df.mul(other=9/5).add(other=32)
         else: return
 
     ## Weight unit ##
     def weightConversion(dataFrame: pan.DataFrame, currentUnit: str, expectedUnit: str):
-        if (currentUnit == "Kilogram") and (expectedUnit == "Pound"):
+        if (currentUnit == "KG") and (expectedUnit == "LB"):
             return dataFrame.mul(other=2.20462262)
-        elif (currentUnit == "Pound") and (expectedUnit == "Kilogram"):
+        elif (currentUnit == "LB") and (expectedUnit == "KG"):
             return dataFrame.mul(other=0.45359237)
             
         elif (currentUnit == "Gram") and (expectedUnit == "Ounce"):
@@ -37,9 +37,9 @@ class SimpleUnitConversion(Module):
 
     ## Distance unit ## 
     def distanceConversion(dataFrame: pan.DataFrame, currentUnit: str, expectedUnit: str):
-        if (currentUnit == "Kilometer") and (expectedUnit == "Mile"):
+        if (currentUnit == "KM") and (expectedUnit == "MI"):
             return dataFrame.mul(other=1.60934)
-        elif (currentUnit == "Mile") and (expectedUnit == "Kilometer"):
+        elif (currentUnit == "MI") and (expectedUnit == "KM"):
             return dataFrame.div(other=1.60934)
             
         if (currentUnit == "Meter") and (expectedUnit == "Feet"):

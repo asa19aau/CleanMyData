@@ -2,7 +2,7 @@ from pyspark.sql import DataFrame
 from clean.models import File, Header
 from .fileReader import *
 #from CleanMyData.clean.models import File
-#import modules.module as module
+import modules.simpleUnitConversion as uc
 
 
 class Engine:
@@ -26,16 +26,25 @@ class Engine:
         #TODO: add logic when modules can be merged
         file_headers = Header.objects.filter(file=self.file)
         for header in file_headers:
-            if header.header_preference.current_type == 'non':
+            currentType = header.header_preference.current_type
+            desiredType = header.header_preference.desired_type
+            if currentType == 'non':
                 pass
-            elif header.header_preference.current_type == 'Temperature':
-                pass
-            elif header.header_preference.current_type == 'Distance':
-                pass
-            elif header.header_preference.current_type == 'Weight':
-                pass
+            elif currentType == 'C' or currentType == 'K' or currentType == 'F':
+                self.dataframe.select(header.name) = \
+                        temperatureConversion(self.dataframe.select(header.name), \
+                        currentType, desiredType)
+            elif currentType == 'KM' or currentType == 'MI':
+                self.dataframe.select(header.name) = \
+                        distanceConversion(self.dataframe.select(header.name), \
+                        currentType, desiredType)
+            elif currentType == 'KG' or currentType == 'LB':
+                self.dataframe.select(header.name) = \
+                        weightConversion(self.dataframe.select(header.name), \
+                        currentType, desiredType)
             else:
                 pass
+
 
 
     def unifyDataframes(self, firstFile, secondFile):
