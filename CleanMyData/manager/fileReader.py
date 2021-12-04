@@ -1,5 +1,5 @@
-import jsonReader
-import xmlReader
+from .jsonReader import *
+from .xmlReader import *
 
 def fileReader(spark, filePath, fileExtension):
     if fileExtension == '.csv':

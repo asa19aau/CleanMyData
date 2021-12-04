@@ -39,14 +39,14 @@ class Header(models.Model):
     @property
     def is_num(self):
         # Include more checks once we know the different data types
-        number_types = ['bigint']
+        number_types = ['bigint', 'int', 'double']
         return self.type in number_types
     
     @property
     def is_string(self):
         # Include more checks once we know the different data types
         string_types = ['string']
-        return self.type in string_types
+        return self.type in string_types    
 
     @property
     def is_date(self):
