@@ -5,6 +5,7 @@ from .fileReader import *
 from .fileWriter import *
 #from CleanMyData.clean.models import File
 from .modules.simpleUnitConversion import *
+from .modules.module import *
 
 
 class Engine:
@@ -28,20 +29,20 @@ class Engine:
         #TODO: add logic when modules can be merged
         file_headers = Header.objects.filter(file=self.file)
         panDataframe = self.dataframe.toPandas()
-        uc = simpleUnitConversion()
         for header in file_headers:
             currentType = header.header_preference.current_type
             desiredType = header.header_preference.desired_type
-            if currentType == 'non':
-                pass
+            if currentType == 'NON':
+                genericCleaner = Module(header, panDataframe)
+                panDataframe = genericCleaner.runCleaner()
             elif currentType == 'C' or currentType == 'K' or currentType == 'F':
-                panDataframe[header.name] = uc.temperatureConversion(panDataframe[header.name], \
+                panDataframe[header.name] = simpleUnitConversion.temperatureConversion(panDataframe[header.name], \
                         currentType, desiredType)
             elif currentType == 'KM' or currentType == 'MI':
-                 panDataframe[header.name] = uc.distanceConversion(panDataframe[header.name], \
+                 panDataframe[header.name] = simpleUnitConversion.distanceConversion(panDataframe[header.name], \
                         currentType, desiredType)
             elif currentType == 'KG' or currentType == 'LB':
-                panDataframe[header.name] = uc.weightConversion(panDataframe[header.name], \
+                panDataframe[header.name] = simpleUnitConversion.weightConversion(panDataframe[header.name], \
                         currentType, desiredType)
             else:
                 pass

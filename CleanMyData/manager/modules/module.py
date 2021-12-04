@@ -8,40 +8,43 @@ class Module:
         self.header = header
 
     def runCleaner(self):
-        if header.is_num == True:
+        name = self.header.name
+        if self.header.is_num == True:
             pref = self.header.header_preference.null_choice_num
             if pref == 'remove-tuples':
-                self.dataframe = deleteNullValues(self.dataframe)
+                self.dataframe = deleteNullValues(self.dataframe, [name])
+                print(f"removing tuples on column {header.name}")
             elif pref == 'Avg':
-                self.dataframe = replaceNullWithAverage(self.dataframe)
+                self.dataframe[name] = replaceNullWithAverage(self.dataframe[name])
             elif pref == 'Med':
-                self.dataframe = replaceNullWithMedian(self.dataframe)
+                self.dataframe[name] = replaceNullWithMedian(self.dataframe[name])
             elif pref == 'Min':
-                self.dataframe = replaceNullWithValue(self.dataframe, getMinimumValue(self.dataframe))
+                self.dataframe[name] = replaceNullWithValue(self.dataframe[name], getMinimumValue(self.dataframe[name]))
             elif pref == 'Max':
-                self.dataframe = replaceNullWithValue(self.dataframe, getMaximumValue(self.dataframe))
+                self.dataframe[name] = replaceNullWithValue(self.dataframe[name], getMaximumValue(self.dataframe[name]))
             elif pref == 'Cus':
                 pass
             elif pref == 'nothing':
                 pass
-        elif header.is_string == True:
-            pref = selfheader.header_preference.null_choice_string
+        elif self.header.is_string == True:
+            pref = self.header.header_preference.null_choice_string
             if pref == 'remove-tuples':
-                self.dataframe = deleteNullValues(self.dataframe)
+                self.dataframe = deleteNullValues(self.dataframe, [name])
             elif pref == 'Cus':
                 pass
             elif pref == 'nothing':
                 pass
-        elif header.is_date == True:
+        elif self.header.is_date == True:
             pref = self.header.header_preference.null_choice_date
             if pref == 'remove-tuples':
-                self.dataframe = deleteNullValues(self.dataframe)
+                self.dataframe = deleteNullValues(self.dataframe, [name])
             elif pref == 'Now':
-                self.dataframe = replaceNullWithValue(self.dataframe, datetime.now())
+                self.dataframe[name] = replaceNullWithValue(self.dataframe[name], datetime.now())
             elif pref == 'Cus':
                 pass
             elif pref == 'nothing':
                 pass
+        return self.dataframe
 
 
     #This class is responsible for the communication between modules and the rest of the system#
