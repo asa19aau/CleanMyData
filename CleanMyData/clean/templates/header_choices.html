@@ -2,8 +2,8 @@
 
 {% block content %}
 
-<h1>Select your desired fields </h1>
-<h5>The fields which are selected will expand and you may then customize the type of data wrangling.</h5>
+<h1>Select your desired fields. </h1>
+<h5>The fields that you select will expand and you may choose how you wish to handle NULL values.</h5>
 <div class='grid-container'></div>
     {% for header in header_list %}
     <h4>{{header.id}} | {{header.name}}</h4>
@@ -20,16 +20,16 @@
                     <!-- Check if header is of type num or string -->
                     {% if header.is_num %} <!-- if header.is_num -->
                         <div>
-                            <p>The header has been identified as a {{ header.type }}.</p>    
+                            <p>This field has been identified as data type {{ header.type }}.</p>    
                         
                             <div>
-                                <p>Handling null values by: </p>
+                                <p>How would you like to handle NULL values for this field?:</p>
                                 
                                 <input type="radio" name="null_num" id="null-num" value="nothing" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'nothing' %} Checked {% endif %}>
-                                <label for="null-num">Nothing</label>
+                                <label for="null-num">Do Nothing</label>
     
                                 <input type="radio" name="null_num" id="null-num" value="remove-tuples" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'remove-tuples' %} Checked {% endif %}>
-                                <label for="null-num">Remove tuples</label>
+                                <label for="null-num">Remove Tuples</label>
                                 
                                 <input type="radio" name="null_num" id="null-num" value="replace" onchange="eventReplaceClick('replace-null-num-{{ header.id }}')" 
                                     {% if header.header_preference.null_choice_num == 'Avg' %} Checked
@@ -39,7 +39,7 @@
                                     {% elif header.header_preference.null_choice_num == 'Cus' %} Checked
                                     {% endif %}
                                 >
-                                <label for="">Replace</label>
+                                <label for="">Replace NULL values</label>
                             </div>
     
                             <div class="
@@ -77,19 +77,19 @@
 
                     {% elif header.is_string %} <!--header.is_string-->
                         <div>
-                            <p>The header has been identified as a {{ header.type }}.</p>
+                            <p>This field has been identified as data type {{ header.type }}.</p>
 
                             <div>
-                                <p>Handling null values by: </p>
+                                <p>How would you like to handle NULL values for this field?:</p>
                                 
                                 <input type="radio" name="null_string" id="null-string" value="nothing" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'nothing' %} Checked {% endif %}>
-                                <label for="null-string">Nothing</label>
+                                <label for="null-string">Do Nothing</label>
     
                                 <input type="radio" name="null_string" id="null-string" value="remove-tuples" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'remove-tuples' %} Checked {% endif %}>
-                                <label for="null-string">Remove tuples</label>
+                                <label for="null-string">Remove Tuples</label>
                                 
                                 <input type="radio" name="null_string" id="null-string" value="replace" onchange="eventReplaceClick('replace-null-string-{{ header.id }}')" {% if header.header_preference.null_choice_string == 'Cus' %} Checked {% endif %}>
-                                <label for="null-string">Replace</label>
+                                <label for="null-string">Replace NULL values</label>
                             </div>
     
                             <div class="
@@ -107,22 +107,22 @@
 
                     {% elif header.is_date %} <!--header.is_date-->
                         <div>
-                            <p>The header has been identified as a {{ header.type }}.</p>
+                            <p>This field has been identified as data type {{ header.type }}.</p>
 
                             <div>
-                                <p>Handling null values by: </p>
+                                <p>How would you like to handle NULL values for this field?:</p>
                                 
                                 <input type="radio" name="null_date" id="null-date" value="nothing" onchange="this.form.submit()"{% if header.header_preference.null_choice_date == 'nothing' %} Checked {% endif %}>
-                                <label for="null-date">Nothing</label>
+                                <label for="null-date">Do Nothing</label>
 
                                 <input type="radio" name="null_date" id="null-date" value="remove-tuples" onchange="this.form.submit()" {% if header.header_preference.null_choice_date == 'remove-tuples' %} Checked {% endif %}>
-                                <label for="null-date">Remove tuples</label>
+                                <label for="null-date">Remove Tuples</label>
                                 
                                 <input type="radio" name="null_date" id="null-date" value="replace" onchange="eventReplaceClick('replace-null-date-{{ header.id }}')" 
                                     {% if header.header_preference.null_choice_date == 'Now' %} Checked
                                     {% elif header.header_preference.null_choice_date == 'Cus' %} Checked 
                                     {% endif %}>
-                                <label for="null-date">Replace</label>
+                                <label for="null-date">Replace NULL values</label>
                             </div>
 
                             <div class="
