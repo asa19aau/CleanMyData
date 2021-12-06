@@ -13,7 +13,6 @@ class Module:
             pref = self.header.header_preference.null_choice_num
             if pref == 'remove-tuples':
                 self.dataframe = deleteNullValues(self.dataframe, [name])
-                print(f"removing tuples on column {header.name}")
             elif pref == 'Avg':
                 self.dataframe[name] = replaceNullWithAverage(self.dataframe[name])
             elif pref == 'Med':
