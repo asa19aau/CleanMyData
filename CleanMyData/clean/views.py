@@ -42,15 +42,17 @@ def frontpage_view(request):
     
 
 def success_view(request):
-    files = File.objects.order_by('-id')
+    files = File.objects.all()
 
     #DO THIS ASYNC PLEASE
     for file in files:
         if file.is_wrangled == False:
             engine = Engine(spark, file)
             engine.cleanMyData()
-            file.is_wrangled == True
+            file.is_wrangled = True
+            file.save()
 
+    files = File.objects.order_by('-id')
     return render(request, "success.html", {
         "files": files
     })
