@@ -2,11 +2,11 @@ import pyspark.pandas as pan
 
 def fileWriter(spark, filePath, fileExtension, dataframe):
     if fileExtension == '.csv':
-        dataframe.write.csv(filePath)
+        dataframe.write.mode("overwrite").csv(filePath)
     elif fileExtension == '.orc':
-        dataframe.write.orc(filePath)
+        dataframe.write.mode("overwrite").orc(filePath)
     elif fileExtension == '.parquet':
-        dataframe.write.parquet(filePath)
+        dataframe.write.mode("overwrite").parquet(filePath)
     elif fileExtension == '.json':
-        dataframe.write.json(filePath)
+        dataframe.write.mode("overwrite").json(filePath)
 

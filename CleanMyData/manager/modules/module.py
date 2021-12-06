@@ -9,6 +9,7 @@ class Module:
 
     def runCleaner(self):
         name = self.header.name
+        print(self.dataframe)
         if self.header.is_num == True:
             pref = self.header.header_preference.null_choice_num
             if pref == 'remove-tuples':
