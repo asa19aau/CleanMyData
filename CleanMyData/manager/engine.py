@@ -31,7 +31,7 @@ class Engine:
         for header in file_headers:
             currentType = header.header_preference.current_type
             desiredType = header.header_preference.desired_type
-            if currentType == 'N0N':
+            if currentType == 'NON':
                 genericCleaner = Module(header, panDataframe)
                 panDataframe = genericCleaner.runCleaner()
             elif currentType == 'C' or currentType == 'K' or currentType == 'F':
