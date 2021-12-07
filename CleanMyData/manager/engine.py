@@ -26,24 +26,25 @@ class Engine:
 
 
     def cleanMyData(self):
-        #TODO: add logic when modules can be merged
         file_headers = Header.objects.filter(file=self.file)
         panDataframe = self.dataframe.toPandas()
         for header in file_headers:
             currentType = header.header_preference.current_type
             desiredType = header.header_preference.desired_type
-            if currentType == 'NON':
+            if currentType == 'N0N':
                 genericCleaner = Module(header, panDataframe)
                 panDataframe = genericCleaner.runCleaner()
             elif currentType == 'C' or currentType == 'K' or currentType == 'F':
-                panDataframe[header.name] = simpleUnitConversion.temperatureConversion(panDataframe[header.name], \
-                        currentType, desiredType)
+                header.header_preference.current_type = 'C'
+                header.header_preference.desired_type = 'K'
+                uc = SimpleUnitConversion(header, panDataframe)
+                panDataframe = uc.temperatureConversion()
             elif currentType == 'KM' or currentType == 'MI':
-                 panDataframe[header.name] = simpleUnitConversion.distanceConversion(panDataframe[header.name], \
-                        currentType, desiredType)
+                uc = SimpleUnitConversion(header, panDataframe)
+                panDataframe = uc.distanceConversion()
             elif currentType == 'KG' or currentType == 'LB':
-                panDataframe[header.name] = simpleUnitConversion.weightConversion(panDataframe[header.name], \
-                        currentType, desiredType)
+                uc = SimpleUnitConversion(header, panDataframe)
+                panDataframe = uc.weightConversion()
             else:
                 pass
         self.dataframe = self.spark.createDataFrame(panDataframe)
@@ -60,8 +61,6 @@ class Engine:
             secondDataframe = secondFile
         elif firstFile != None:
             secondDataframe = fileReader(self.spark, secondFile.file_path, secondFile.file_extension)
-
-        print(firstDataframe.count(), secondDataframe.count())
 
         if len(firstDataframe.columns) == len(secondDataframe.columns):
             return firstDataframe.union(secondDataframe)

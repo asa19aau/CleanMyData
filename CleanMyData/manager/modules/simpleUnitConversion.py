@@ -1,54 +1,75 @@
 import pyspark.pandas as pan
 from .module import Module
 
-class SimpleUnitConversion(Module): 
+class SimpleUnitConversion(Module):
+    def __init(self, header, dataframe):
+        super().__init__(header, dataframe)
+
 ## Temperature unit ##
-    def temperatureConversion(dataFrame: pan.DataFrame, currentUnit: str, expectedUnit: str):
+    def temperatureConversion(self):
+        self.dataframe = super().runCleaner()
+        currentUnit = self.header.header_preference.current_type
+        expectedUnit = self.header.header_preference.desired_type
+        name = self.header.name
+        dataframe = self.dataframe[name]
         if (currentUnit == "C") and (expectedUnit == "F"): 
-            return dataFrame.mul(other=9/5).add(other=32)
-        elif (currentUnit == "C") and (expectedUnit == "K"): 
-            return dataFrame.add(other=273.15)
+            self.dataframe[name] = dataframe.mul(other=9/5).add(other=32)
+        elif (currentUnit == "C") and (expectedUnit == "K"):
+            self.dataframe[name] = dataframe.add(other=273.15)
 
         elif (currentUnit == "F") and (expectedUnit == "C"): 
-            return dataFrame.sub(other=32).mul(other=(5/9))
+            self.dataframe[name] = dataframe.sub(other=32).mul(other=(5/9))
         elif (currentUnit == "F") and (expectedUnit == "K"): 
-            df = dataFrame.sub(other=32).mul(other=(5/9))
-            return df.add(other=275.15)  
+            df = dataframe.sub(other=32).mul(other=(5/9))
+            self.dataframe[name] = df.add(other=275.15)  
 
         elif (currentUnit == "K") and (expectedUnit == "C"): 
-            return dataFrame.sub(other=273.15)
+            self.dataframe[name] = dataframe.sub(other=273.15)
         elif (currentUnit == "K") and (expectedUnit == "F"): 
-            df = dataFrame.sub(other=275.15)
-            return df.mul(other=9/5).add(other=32)
+            df = dataframe.sub(other=275.15)
+            self.dataframe[name] = df.mul(other=9/5).add(other=32)
         else: return
+        return self.dataframe
 
     ## Weight unit ##
-    def weightConversion(dataFrame: pan.DataFrame, currentUnit: str, expectedUnit: str):
+    def weightConversion(self):
+        super().runCleaner()
+        currentUnit = self.header.header_preference.current_type
+        expectedUnit = self.header.header_preference.desired_type
+        name = self.header.name
+        dataframe = self.dataframe[name]
         if (currentUnit == "KG") and (expectedUnit == "LB"):
-            return dataFrame.mul(other=2.20462262)
+            self.dataframe[name] = dataframe.mul(other=2.20462262)
         elif (currentUnit == "LB") and (expectedUnit == "KG"):
-            return dataFrame.mul(other=0.45359237)
+            self.dataframe[name] = dataframe.mul(other=0.45359237)
             
         elif (currentUnit == "Gram") and (expectedUnit == "Ounce"):
-            return dataFrame.mul(other=0.0352739619)
+            self.dataframe[name] = dataframe.mul(other=0.0352739619)
         elif (currentUnit == "Ounce") and (expectedUnit == "Gram"):
-            return dataFrame.mul(other=28.3495231)
+            self.dataframe[name] = dataframe.mul(other=28.3495231)
         else: return 
+        return self.dataframe
 
     ## Distance unit ## 
-    def distanceConversion(dataFrame: pan.DataFrame, currentUnit: str, expectedUnit: str):
+    def distanceConversion(self):
+        super().runCleaner()
+        currentUnit = self.header.header_preference.current_type
+        expectedUnit = self.header.header_preference.desired_type
+        name = self.header.name
+        dataframe = self.dataframe[name]
         if (currentUnit == "KM") and (expectedUnit == "MI"):
-            return dataFrame.mul(other=1.60934)
+            self.dataframe[name] = dataframe.mul(other=1.60934)
         elif (currentUnit == "MI") and (expectedUnit == "KM"):
-            return dataFrame.div(other=1.60934)
+            self.dataframe[name] = dataframe.div(other=1.60934)
             
         if (currentUnit == "Meter") and (expectedUnit == "Feet"):
-            return dataFrame.mul(other=3.281)
+            self.dataframe[name] = dataframe.mul(other=3.281)
         elif (currentUnit == "Feet") and (expectedUnit == "Meter"):
-            return dataFrame.div(other=3.281)
+            self.dataframe[name] = dataframe.div(other=3.281)
             
         if (currentUnit == "Centimeter") and (expectedUnit == "Inch"):
-            return dataFrame.div(other=2.54)
+            self.dataframe[name] = dataframe.div(other=2.54)
         elif (currentUnit == "Inch") and (expectedUnit == "Centimeter"):
-            return dataFrame.mul(other=2.54)
+            self.dataframe[name] = dataframe.mul(other=2.54)
         else: return 
+        return self.dataframe
