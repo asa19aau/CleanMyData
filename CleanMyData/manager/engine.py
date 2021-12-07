@@ -35,8 +35,6 @@ class Engine:
                 genericCleaner = Module(header, panDataframe)
                 panDataframe = genericCleaner.runCleaner()
             elif currentType == 'C' or currentType == 'K' or currentType == 'F':
-                header.header_preference.current_type = 'C'
-                header.header_preference.desired_type = 'K'
                 uc = SimpleUnitConversion(header, panDataframe)
                 panDataframe = uc.temperatureConversion()
             elif currentType == 'KM' or currentType == 'MI':
