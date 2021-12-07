@@ -15,7 +15,7 @@ def fileReader(spark, filePath, fileExtension):
     elif fileExtension == '.tsv':
         dataframe = spark.read.option("delimiter", "\t").csv(filePath, header=True)
     elif fileExtension == '.xml':
-        reader = xmlReader.xmlReader(spark)
+        reader = xmlReader(spark)
         dataframe = reader.getXMLDataFrame(filePath)
 
     return dataframe
