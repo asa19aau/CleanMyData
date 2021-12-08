@@ -56,6 +56,7 @@ def success_view(request):
     #start timer here
     start_time = process_time()
     uploads = Upload.objects.all()
+    wrangledFilePath = ""
 
     #DO THIS ASYNC PLEASE
     for upload in uploads:
@@ -66,12 +67,20 @@ def success_view(request):
                 engine.cleanMyData()
                 document.is_wrangled = True
                 document.save()
+                wrangledFilePath = document.file_name
 
     uploads = Upload.objects.all().order_by('-id')
 
     #end timer here
     end_time = process_time()
     print(f"time start: {start_time}\ntime end: {end_time}\ntotal time: {end_time - start_time}")
+
+    outputFile = open('output_file.txt', 'a')
+
+    outputFile.write(f"{wrangledFilePath} took {time_taken} seconds\n")
+    outputFile.close()
+
+    print(wrangledFilePath)
 
     return render(request, "success.html", {
         "uploads": uploads,
