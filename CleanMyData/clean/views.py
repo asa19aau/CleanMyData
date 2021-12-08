@@ -10,6 +10,8 @@ import pyspark
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
+from time import process_time
+
 
 spark = SparkSession.builder.appName('preferences').getOrCreate()
 
@@ -47,6 +49,9 @@ def frontpage_view(request):
     
 
 def success_view(request):
+    #start timer here
+    start_time = process_time()
+<<<<<<< HEAD
     uploads = Upload.objects.all()
 
     #DO THIS ASYNC PLEASE
@@ -60,7 +65,11 @@ def success_view(request):
                 document.save()
 
     uploads = Upload.objects.all().order_by('-id')
-    
+
+    #end timer here
+    end_time = process_time()
+    print(f"time start: {start_time}\ntime end: {end_time}\ntotal time: {end_time - start_time}")
+
     return render(request, "success.html", {
         "uploads": uploads,
     })
