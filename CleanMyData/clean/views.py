@@ -55,7 +55,6 @@ def frontpage_view(request):
 def success_view(request):
     #start timer here
     start_time = process_time()
-<<<<<<< HEAD
     uploads = Upload.objects.all()
 
     #DO THIS ASYNC PLEASE
