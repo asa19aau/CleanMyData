@@ -52,7 +52,6 @@ class Engine:
         self.dataframe = self.spark.createDataFrame(panDataframe)
         fileWriter(self.spark, self.document.file_path, self.document.file_extension, self.dataframe)
 
-
     def unifyDataframes(self, firstFile, secondFile):
         if isinstance(firstFile, DataFrame):
             firstDataframe = firstFile
