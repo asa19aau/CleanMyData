@@ -23,13 +23,16 @@ spark = SparkSession.builder.appName('preferences').getOrCreate()
 def frontpage_view(request):
     if request.method == 'POST':
         form = UploadForm(request.POST, request.FILES)
+        print(f"form: {form}")
         
         if form.is_valid():
             upload = Upload.objects.create()
 
             documents = request.FILES.getlist('documents')
+            print(f"documents: {documents}")
             for d in documents:
                 document = Document.objects.create(file=d, is_wrangled=False, upload=upload)
+                print(f"d: {d}")
 
                 #MAKE HEADER OBJECTS
                 engine = Engine(spark=spark, fileModel=document)
@@ -53,6 +56,7 @@ def frontpage_view(request):
     
 
 def success_view(request):
+    print(request)
     #start timer here
     start_time = process_time()
     uploads = Upload.objects.all()
@@ -62,6 +66,8 @@ def success_view(request):
     for upload in uploads:
         documents = Document.objects.filter(upload=upload)
         for document in documents:
+            print(f"document in success view: {document.__dict__}")
+            print(f"document header: {document.headers}")
             if document.is_wrangled == False:
                 engine = Engine(spark, document)
                 engine.cleanMyData()
