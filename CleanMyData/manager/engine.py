@@ -33,6 +33,8 @@ class Engine:
         file_headers = Header.objects.filter(document=self.document)
         panDataframe = self.dataframe.toPandas()
         for header in file_headers:
+            print(f"header in cleanMyData: {header}")
+            print(f"header in cleanMyData: {header.header_preference}")
             currentType = header.header_preference.current_type
             desiredType = header.header_preference.desired_type
             if currentType == 'NON':
