@@ -3,7 +3,7 @@
 {% block content %}
 
 <h1>Select your desired fields. </h1>
-<h5>The fields that you select will expand and you may choose how you wish to handle NULL values.</h5>
+<h5>The fields that you select will expand and you may choose how you wish to handle NULL values. The fields that you do not selected will not have data wrangling performed on them.</h5>
 <div class='grid-container'></div>
     {% for header in header_list %}
     <h4>{{header.id}} | {{header.name}}</h4>
@@ -23,7 +23,7 @@
                             <p>This field has been identified as data type {{ header.type }}.</p>    
                         
                             <div>
-                                <p>How would you like to handle NULL values for this field?:</p>
+                                <p>How would you like to handle NULL values for this field?</p>
                                 
                                 <input type="radio" name="null_num" id="null-num" value="nothing" onchange="this.form.submit()" {% if header.header_preference.null_choice_num == 'nothing' %} Checked {% endif %}>
                                 <label for="null-num">Do Nothing</label>
@@ -80,7 +80,7 @@
                             <p>This field has been identified as data type {{ header.type }}.</p>
 
                             <div>
-                                <p>How would you like to handle NULL values for this field?:</p>
+                                <p>How would you like to handle NULL values for this field?</p>
                                 
                                 <input type="radio" name="null_string" id="null-string" value="nothing" onchange="this.form.submit()" {% if header.header_preference.null_choice_string == 'nothing' %} Checked {% endif %}>
                                 <label for="null-string">Do Nothing</label>
@@ -110,7 +110,7 @@
                             <p>This field has been identified as data type {{ header.type }}.</p>
 
                             <div>
-                                <p>How would you like to handle NULL values for this field?:</p>
+                                <p>How would you like to handle NULL values for this field?</p>
                                 
                                 <input type="radio" name="null_date" id="null-date" value="nothing" onchange="this.form.submit()"{% if header.header_preference.null_choice_date == 'nothing' %} Checked {% endif %}>
                                 <label for="null-date">Do Nothing</label>
@@ -145,7 +145,7 @@
                         </div>
 
                     {% else %}
-                        <p>An error has occured</p>
+                        <p>An error has occured.</p>
                         <p>The data type was: {{ header.type }}</p>
 
                     {% endif %}
