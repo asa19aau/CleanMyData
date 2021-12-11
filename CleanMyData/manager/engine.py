@@ -52,7 +52,6 @@ class Engine:
                     pass
         self.dataframe = self.spark.createDataFrame(panDataframe)
         fileWriter(self.spark, self.document.file_path, self.document.file_extension, self.dataframe)
-
     #Add rows
     def unifyDataframes(self, firstFile, secondFile):
         if isinstance(firstFile, DataFrame):
