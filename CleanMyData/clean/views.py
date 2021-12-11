@@ -69,7 +69,7 @@ def success_view(request):
     end_time = process_time()
     print(f"time start: {start_time}\ntime end: {end_time}\ntotal time: {end_time - start_time}")
 
-    return render(request, "success.html", {
+   return render(request, "success.html", {
         "uploads": uploads,
     })
     
