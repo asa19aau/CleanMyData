@@ -29,12 +29,8 @@ class Engine:
 
 
     def cleanMyData(self):
-<<<<<<< HEAD
         #TODO: add logic when modules can be merged
         file_headers = Header.objects.filter(document=self.document)
-=======
-        file_headers = Header.objects.filter(file=self.file)
->>>>>>> 2d8d7f385c89a195719e5572d27f27becb69fbb2
         panDataframe = self.dataframe.toPandas()
         for header in file_headers:
             currentType = header.header_preference.current_type
