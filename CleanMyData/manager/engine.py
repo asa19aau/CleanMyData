@@ -46,6 +46,7 @@ class Engine:
             else:
                 pass
         self.dataframe = self.spark.createDataFrame(panDataframe)
+        self.dataframe.show()
         fileWriter(self.spark, self.file.file_path, self.file.file_extension, self.dataframe)
 
 
