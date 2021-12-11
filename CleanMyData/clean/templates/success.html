@@ -16,7 +16,7 @@
                 <p style="font-size: 12px;">&emsp; Document ID: {{ document.id }} | Document extension: <span style="font-style: italic;">{{ document.file_extension }}</span></p>
                 <p style="font-size: 12px;">&emsp; Data cleaning completed: <code>{{ document.is_wrangled }}</code></p>
                 <!-- <a href="{{ clean.file.url }}">{{ file_uploaded.file_name }}</a> -->
-                {% if not forloop.last %}
+                {% if not git forloop.last %}
                     <p style="font-size: 12px; color:grey;">&emsp; ----------------------------------------------------------------</p>
                 {% endif %}
             </div>
