@@ -1,9 +1,12 @@
+#Fix to Spark error
+import os
+os.environ["PYARROW_IGNORE_TIMEZONE"] = "1"
+
 from pyspark.sql import DataFrame
 import pyspark.pandas as pan
-from clean.models import File, Header
+from clean.models import Upload, Document, Header
 from .fileReader import *
 from .fileWriter import *
-#from CleanMyData.clean.models import File
 from .modules.simpleUnitConversion import *
 from .modules.module import *
 
@@ -12,9 +15,9 @@ class Engine:
     def __init__(self, spark, fileModel):
         self.spark = spark
         
-        self.file = fileModel
+        self.document = fileModel
 
-        self.dataframe = fileReader(self.spark, self.file.file_path, self.file.file_extension)
+        self.dataframe = fileReader(self.spark, self.document.file_path, self.document.file_extension)
 
 
     def getColumnNames(self):
@@ -27,7 +30,7 @@ class Engine:
 
     def cleanMyData(self):
         #TODO: add logic when modules can be merged
-        file_headers = Header.objects.filter(file=self.file)
+        file_headers = Header.objects.filter(document=self.document)
         panDataframe = self.dataframe.toPandas()
         for header in file_headers:
             currentType = header.header_preference.current_type
@@ -47,7 +50,7 @@ class Engine:
             else:
                 pass
         self.dataframe = self.spark.createDataFrame(panDataframe)
-        fileWriter(self.spark, self.file.file_path, self.file.file_extension, self.dataframe)
+        fileWriter(self.spark, self.document.file_path, self.document.file_extension, self.dataframe)
 
 
     def unifyDataframes(self, firstFile, secondFile):

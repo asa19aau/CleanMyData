@@ -161,13 +161,25 @@
     {% endfor %}
 </div>
 
+{% if next_document %}
 <div style="text-align: right;"> 
-    <a href="/success/">
+    <a href="/header-choices/{{ next_document }}">
         <button>
-            Continue
+            Next file
         </button>
     </a> 
 </div>
+
+{% else %}
+<div style="text-align: right;"> 
+    <a href="/success/">
+        <button>
+            Clean the documents
+        </button>
+    </a> 
+</div>
+
+{% endif %}
 
 
 {% endblock %}

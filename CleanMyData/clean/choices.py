@@ -50,3 +50,6 @@ NULL_CHOICES_DATE = [
     ('Now', 'Current date'),
     ('Cus', 'Custom date'),
 ]
+
+#The files types allowed to be uploaded
+valid_extensions = ['.csv', '.json', '.tsv', '.xml', '.yaml']

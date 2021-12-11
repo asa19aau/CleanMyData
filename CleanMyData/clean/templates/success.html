@@ -1,25 +1,26 @@
 {% extends "general.html" %}
 
 {% block content %}
-    <h2>Your file(s) were successfuly uploaded and wrangled.</h2>
-    <h4>Here, you'll find all the files you've uploaded.</h4>
+    <h2>Your documents were successfuly uploaded.</h2>
+    <h4>Here, you'll find all your uploads and documents.</h4>
 
     <br>
-    <br>
 
-    {% for file_uploaded in files %}
-       <div>
-            <br>
-            <p>File ID: {{ file_uploaded.id }} | <code>File type: {{ file_uploaded.file_extension }}</code></p>
-            <p>is_wrangled: {{ file_uploaded.is_wrangled }}</p>
-            <br>
+    {% for upload in uploads %}
+            <h4>Upload ID: {{ upload.id }} | Creation: {{ upload.created }}</h4>
+            <h5>Documents in upload: {{ upload.documents.count }}</h5>
 
-            {% if file_uploaded.file %}
-
-            <a href="{{ clean.file.url }}">{{ file_uploaded.file_name }}</a>
-
-            {% endif %}
-        </div>
+            <h5>Documents:</h5>
+            <div>
+                {% for document in upload.documents.all %} 
+                <p style="font-size: 12px;">&emsp; Document ID: {{ document.id }} | Document extension: <span style="font-style: italic;">{{ document.file_extension }}</span></p>
+                <p style="font-size: 12px;">&emsp; Data cleaning completed: <code>{{ document.is_wrangled }}</code></p>
+                <!-- <a href="{{ clean.file.url }}">{{ file_uploaded.file_name }}</a> -->
+                {% if not forloop.last %}
+                    <p style="font-size: 12px; color:grey;">&emsp; ----------------------------------------------------------------</p>
+                {% endif %}
+            </div>
+            {% endfor %}
         
         {% if not forloop.last %}
             <br><hr>

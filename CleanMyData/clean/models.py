@@ -5,11 +5,22 @@ import os
 from .choices import *
 
 
-class File(models.Model):
+class Upload(models.Model):
     id = models.AutoField(primary_key=True)
-    file = models.FileField(upload_to="media", null=True, blank=False, validators=[validate_file_extension])
-    is_wrangled = models.BooleanField(default=False)
+
+    created = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"ID: {str(self.id)} | Documents: {str(self.documents.count())}"
+
     
+class Document(models.Model):
+    id = models.AutoField(primary_key=True)
+    file = models.FileField(upload_to="media", null=False, blank=False, validators=[validate_file_extension])
+    is_wrangled = models.BooleanField(default=False)
+
+    upload = models.ForeignKey(Upload, on_delete=models.CASCADE, related_name='documents')
+
     @property
     def file_name(self):
         return os.path.splitext(os.path.basename(self.file.name))[0]
@@ -22,18 +33,19 @@ class File(models.Model):
     def file_path(self):
         return self.file.path
 
-    
+    def __str__(self):
+        return f"ID: {str(self.id)} | File: {self.file_name}{self.file_extension}"
+
 
 class Header(models.Model):
     id = models.AutoField(primary_key=True)
     
     name = models.TextField()
     type = models.TextField()
-    file = models.ForeignKey(File, on_delete=models.CASCADE, 
-        related_name="headers")
-    
     selected = models.BooleanField(default=True)
-    
+
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="headers")
+         
     def __str__(self):
         return f"{self.name} | Selected: {self.selected}"
 
@@ -54,6 +66,7 @@ class Header(models.Model):
         # Include more checks once we know the different data types
         date_types = ['date']
         return self.type in date_types
+
 
 class HeaderPreference(models.Model):
     id = models.AutoField(primary_key=True)

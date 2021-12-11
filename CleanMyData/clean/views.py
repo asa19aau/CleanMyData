@@ -1,10 +1,10 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from manager.engine import Engine
-from clean.forms.form import HeaderForm
-from clean.models import File, HeaderPreference, Header
-from clean.forms.form import FileForm
+from clean.forms.form import HeaderForm, UploadForm
+from clean.models import Upload, Document, HeaderPreference, Header
 from django.http import HttpResponseRedirect
+
 
 import pyspark
 from pyspark import SparkContext
@@ -16,25 +16,30 @@ spark = SparkSession.builder.appName('preferences').getOrCreate()
 
 def frontpage_view(request):
     if request.method == 'POST':
-        form = FileForm(request.POST, request.FILES)
+        form = UploadForm(request.POST, request.FILES)
         
         if form.is_valid():
-            file_form = form.save()
+            upload = Upload.objects.create()
 
-            #MAKE HEADER OBJECTS
-            engine = Engine(spark=spark, fileModel=file_form)
-            columns = engine.getColumnNames()
-            print(engine.getSchema())
-            
-            for header in columns:
-                header_object = Header.objects.create(name=header, file=file_form, selected=True, type=dict(engine.dataframe.dtypes)[header]) #type=dict(df.dtypes)[header]  |  num, string, date
-                header_definition = HeaderPreference.objects.create(header=header_object)
-                header_definition.save()
-                header_object.save()
-            
-            return HttpResponseRedirect("/header-choices/" + str(file_form.id)) 
+            documents = request.FILES.getlist('documents')
+            for d in documents:
+                document = Document.objects.create(file=d, is_wrangled=False, upload=upload)
+
+                #MAKE HEADER OBJECTS
+                engine = Engine(spark=spark, fileModel=document)
+                columns = engine.getColumnNames()
+
+                for header in columns:
+                    header_object = Header.objects.create(name=header, document=document, selected=True, type=dict(engine.dataframe.dtypes)[header])
+                    header_definition = HeaderPreference.objects.create(header=header_object)
+                    header_definition.save()
+                    header_object.save()
+
+            documents = Document.objects.filter(upload=upload).order_by('id')
+
+            return HttpResponseRedirect("/header-choices/" + str(documents[0].id)) 
     else:
-        form = FileForm()
+        form = UploadForm()
         
     return render(request, "entry.html", {
         "form": form
@@ -42,24 +47,27 @@ def frontpage_view(request):
     
 
 def success_view(request):
-    files = File.objects.all()
+    uploads = Upload.objects.all()
 
     #DO THIS ASYNC PLEASE
-    for file in files:
-        if file.is_wrangled == False:
-            engine = Engine(spark, file)
-            engine.cleanMyData()
-            file.is_wrangled = True
-            file.save()
+    for upload in uploads:
+        documents = Document.objects.filter(upload=upload)
+        for document in documents:
+            if document.is_wrangled == False:
+                engine = Engine(spark, document)
+                engine.cleanMyData()
+                document.is_wrangled = True
+                document.save()
 
-    files = File.objects.order_by('-id')
+    uploads = Upload.objects.all().order_by('-id')
+    
     return render(request, "success.html", {
-        "files": files
+        "uploads": uploads,
     })
     
       
 def headerChoice_view(request, pk):
-    headers = Header.objects.filter(file_id=pk)
+    headers = Header.objects.filter(document_id=pk)
     
     if request.method == 'POST':
         form = HeaderForm(request.POST)
@@ -77,7 +85,6 @@ def headerChoice_view(request, pk):
             }
             
             header = Header.objects.get(id=data['id'])
-            print(header.header_preference.null_choice_string)
             header.selected = data['selected']
 
             if data['null_num'] != '':
@@ -115,15 +122,33 @@ def headerChoice_view(request, pk):
 
             header.header_preference.save()
             header.save()
-            
+
+
             return HttpResponseRedirect("/header-choices/" + str(pk)) 
     else:
         form = HeaderForm()
     
+    document = Document.objects.get(id = pk) #Retrieve currently selected document
+    upload = Upload.objects.get(documents = document) #Retrieve the Upload which the document is attached to
+    documents = Document.objects.filter(upload = upload) #Retrieve all the documents of the Upload
+
+    next_document = False
+
+    for document in documents: 
+        if document.id == pk:
+            print('You working on this rn')
+            if document != documents.last():
+                next_document = document.id + 1
+
+    print(next_document)
+
+
+
     return render(request, "header_choices.html", {
         "form": form,
         "header_list": headers,
-        "file_id": pk
+        "file_id": pk,
+        "next_document": next_document
     })
 
     
