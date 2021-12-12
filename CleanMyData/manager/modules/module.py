@@ -11,7 +11,6 @@ class Module:
         name = self.header.name
         if self.header.is_num == True:
             pref = self.header.header_preference.null_choice_num
-            print(f"pref in runClearner as num: {pref}")
             if pref == 'remove-tuples':
                 self.dataframe = deleteNullValues(self.dataframe, [name])
             elif pref == 'Avg':
@@ -28,7 +27,6 @@ class Module:
                 pass
         elif self.header.is_string == True:
             pref = self.header.header_preference.null_choice_string
-            print(f"pref in runClearner as string: {pref}")
             if pref == 'remove-tuples':
                 self.dataframe = deleteNullValues(self.dataframe, [name])
             elif pref == 'Cus':
@@ -36,7 +34,6 @@ class Module:
             elif pref == 'nothing':
                 pass
         elif self.header.is_date == True:
-            print(f"pref in runClearner as date: {pref}")
             pref = self.header.header_preference.null_choice_date
             if pref == 'remove-tuples':
                 self.dataframe = deleteNullValues(self.dataframe, [name])
