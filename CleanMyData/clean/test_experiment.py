@@ -9,8 +9,6 @@ import os
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
-test = []
-
 spark = SparkSession.builder.getOrCreate()
 
 class TestExperiment(TestCase):
@@ -18,36 +16,62 @@ class TestExperiment(TestCase):
         print("setup")
         self.factory = RequestFactory()
         self.request = self.factory.get(success_view)
-        self.upload = Upload.objects.create()
-        self.d = "testdata/100000rowsdirty.csv"
-    
-    def test_data_wrangling(self):
-        return
-        print("test_data_wrangling")
-        upload = Upload.objects.create()
-        document = Document.objects.create(file=self.d, is_wrangled=False, upload=upload)
-        engine = Engine(spark=spark, fileModel=document)
-        columns = engine.getColumnNames()
-        headerSaver(document, engine)
-        request = self.factory.get(success_view)
-        #print(f"request: {request}")
-        response = success_view(request)
-        #print(f"response: {response}")
-        headers = Header.objects.filter(document_id=1)
-        #print(f"headers: {headers}")
-   
-    def test_1000rows_clean(self):
-        performTest(0, getDataArr(0), "Base", 1, self.request)
-        performTest(0, getDataArr(1), "1", 1, self.request)
+        self.dataIdStart = 1
+  
+    def test_base_clean(self):
+        for i in range(3):
+            performTest(0, getDataArr(0, self.dataIdStart), "Base", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(1, getDataArr(0, self.dataIdStart), "Base", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(2, getDataArr(0, self.dataIdStart), "Base", i, self.request)
+            self.dataIdStart += 5
+
+    def test_1_remove_null_clean(self):
+        for i in range(3):
+            performTest(0, getDataArr(1, self.dataIdStart), "One", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(1, getDataArr(1, self.dataIdStart), "One", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(2, getDataArr(1, self.dataIdStart), "One", i, self.request)
+            self.dataIdStart += 5
+
+    def test_2_remove_null_dirty(self):
+        for i in range(3):
+            performTest(3, getDataArr(2, self.dataIdStart), "Two", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(4, getDataArr(2, self.dataIdStart), "Two", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(5, getDataArr(2, self.dataIdStart), "Two", i, self.request)
+            self.dataIdStart += 5
+
+    def test_3_replace_null_avg_dirty(self):
+        for i in range(3):
+            performTest(3, getDataArr(3, self.dataIdStart), "Three", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(4, getDataArr(3, self.dataIdStart), "Three", i, self.request)
+            self.dataIdStart += 5
+        for i in range(3):
+            performTest(5, getDataArr(3, self.dataIdStart), "Three", i, self.request)
+            self.dataIdStart += 5
+
+
 
 def performTest(filePosition, dataArr, testID, testNumber, request):
     files = [
-            "set1.csv", "set2.csv", "set3.csv",
-            "set4.csv", "set5.csv", "set6.csv"
+            "10000RowClean.csv", "100000RowClean.csv", "1000000RowClean.csv",
+            "10000RowDirty.csv", "100000RowDirty.csv", "1000000RowDirty.csv"
             ]
 
     sourceFile = os.path.abspath("uploads/testdata/" + files[filePosition])
-    destinationFile = os.path.abspath("uploads/testfileresults/" + "Pos" + str(filePosition) + "ID" + testID + "TestNumber" + str(testNumber) + files[filePosition])
+    destinationFile = os.path.abspath("uploads/testfileresults/" + "Pos" + str(filePosition) + "ID" + testID + "TestNumber" + str(testNumber) + "." + files[filePosition])
     copyfile(sourceFile, destinationFile)
     d = destinationFile
     upload = Upload.objects.create()
@@ -57,13 +81,9 @@ def performTest(filePosition, dataArr, testID, testNumber, request):
     headerSaver(document,engine)
 
 
-    #find a way to set preferences below here
     for data in dataArr:
-        #print(f"data in tester: {data}---------------------------------")
-
         header = Header.objects.get(id=data['id'])
         header.selected = data['selected']
-        #print(f"header.selected: {header.selected} ==================")
     
         if data['null_num'] != '':
             if data['replace_num'] != 'replace':
@@ -101,6 +121,7 @@ def performTest(filePosition, dataArr, testID, testNumber, request):
         header.header_preference.save()
         header.save()
     response = success_view(request)
+
     headers = Header.objects.filter(document_id=1)
  
 
@@ -112,10 +133,11 @@ def headerSaver(document, engine):
         header_definition.save()
         header_object.save()
 
-def getDataArr(testNumber):
+def getDataArr(testNumber, testid):
     if testNumber == 0:
+        #all fields are deselected
         dataArr = [{
-          "id":1,
+          "id":testid,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -125,7 +147,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":2,
+          "id":testid + 1,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -135,7 +157,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":3,
+          "id":testid + 2,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -145,7 +167,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":4,
+          "id":testid + 3,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -155,7 +177,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           { 
-          "id":5,
+          "id":testid + 4,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -165,9 +187,40 @@ def getDataArr(testNumber):
           'replace_date': '',
           },]
 
-    elif testNumber == 1:
+    elif testNumber == 1 or testNumber == 2:
+        #removes null values from ID 5
         dataArr = [{
-          "id":1,
+          "id":testid,
+          "selected":True,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': 'nothing',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },
+          {
+          "id":testid+1,
+          "selected":True,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': '',
+          'replace_string': '',
+          'null_date': 'nothing',
+          'replace_date': '',
+          },
+          {
+          "id":testid+2,
+          "selected":True,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': 'nothing',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },
+          {
+          "id":testid+3,
           "selected":True,
           'null_num': 'nothing',
           'replace_num': '',
@@ -176,140 +229,60 @@ def getDataArr(testNumber):
           'null_date': '',
           'replace_date': '',
           },
-          {
-          "id":2,
-          "selected":False,
-          'null_num': '',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          {
-          "id":3,
-          "selected":True,
-          'null_num': '',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          {
-          "id":4,
-          "selected":False,
-          'null_num': '',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
           { 
-          "id":5,
-          "selected":True,
-          'null_num': 'replace',
-          'replace_num': 'Avg',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },]
-    elif testNumber == 2:
-        dataArr = [{
-          "id":1,
-          "selected":True,
-          'null_num': 'nothing',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          {
-          "id":2,
-          "selected":False,
-          'null_num': '',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          {
-          "id":3,
+          "id":testid+4,
           "selected":True,
           'null_num': '',
           'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          {
-          "id":4,
-          "selected":False,
-          'null_num': '',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          { 
-          "id":5,
-          "selected":True,
-          'null_num': 'replace',
-          'replace_num': 'Avg',
           'null_string': '',
           'replace_string': '',
           'null_date': '',
           'replace_date': '',
           },]
     elif testNumber == 3:
+        #replace null with average on ID 4 and 5
         dataArr = [{
-          "id":1,
+          "id":testid,
           "selected":True,
-          'null_num': 'nothing',
-          'replace_num': '',
-          'null_string': '',
-          'replace_string': '',
-          'null_date': '',
-          'replace_date': '',
-          },
-          {
-          "id":2,
-          "selected":False,
           'null_num': '',
           'replace_num': '',
-          'null_string': '',
+          'null_string': 'nothing',
           'replace_string': '',
           'null_date': '',
           'replace_date': '',
           },
           {
-          "id":3,
+          "id":testid+1,
           "selected":True,
           'null_num': '',
           'replace_num': '',
           'null_string': '',
           'replace_string': '',
+          'null_date': 'nothing',
+          'replace_date': '',
+          },
+          {
+          "id":testid+2,
+          "selected":True,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': 'nothing',
+          'replace_string': '',
           'null_date': '',
           'replace_date': '',
           },
           {
-          "id":4,
-          "selected":False,
-          'null_num': '',
-          'replace_num': '',
+          "id":testid+3,
+          "selected":True,
+          'null_num': 'replace',
+          'replace_num': 'Avg',
           'null_string': '',
           'replace_string': '',
           'null_date': '',
           'replace_date': '',
           },
           { 
-          "id":5,
+          "id":testid+4,
           "selected":True,
           'null_num': 'replace',
           'replace_num': 'Avg',
@@ -320,7 +293,7 @@ def getDataArr(testNumber):
           },]
     elif testNumber == 4:
         dataArr = [{
-          "id":1,
+          "id":testid,
           "selected":True,
           'null_num': 'nothing',
           'replace_num': '',
@@ -330,7 +303,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":2,
+          "id":testid+1,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -340,7 +313,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":3,
+          "id":testid+2,
           "selected":True,
           'null_num': '',
           'replace_num': '',
@@ -350,7 +323,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":4,
+          "id":testid+3,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -360,7 +333,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           { 
-          "id":5,
+          "id":testid+4,
           "selected":True,
           'null_num': 'replace',
           'replace_num': 'Avg',
@@ -371,7 +344,7 @@ def getDataArr(testNumber):
           },]
     elif testNumber == 5:
         dataArr = [{
-          "id":1,
+          "id":testid,
           "selected":True,
           'null_num': 'nothing',
           'replace_num': '',
@@ -381,7 +354,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":2,
+          "id":testid+1,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -391,7 +364,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":3,
+          "id":testid+2,
           "selected":True,
           'null_num': '',
           'replace_num': '',
@@ -401,7 +374,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":4,
+          "id":testid+3,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -411,7 +384,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           { 
-          "id":5,
+          "id":testid+4,
           "selected":True,
           'null_num': 'replace',
           'replace_num': 'Avg',
@@ -422,7 +395,7 @@ def getDataArr(testNumber):
           },]
     elif testNumber == 6:
         dataArr = [{
-          "id":1,
+          "id":testid,
           "selected":True,
           'null_num': 'nothing',
           'replace_num': '',
@@ -432,7 +405,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":2,
+          "id":testid+1,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -442,7 +415,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":3,
+          "id":testid+2,
           "selected":True,
           'null_num': '',
           'replace_num': '',
@@ -452,7 +425,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           {
-          "id":4,
+          "id":testid+3,
           "selected":False,
           'null_num': '',
           'replace_num': '',
@@ -462,7 +435,7 @@ def getDataArr(testNumber):
           'replace_date': '',
           },
           { 
-          "id":5,
+          "id":testid+4,
           "selected":True,
           'null_num': 'replace',
           'replace_num': 'Avg',
@@ -471,12 +444,56 @@ def getDataArr(testNumber):
           'null_date': '',
           'replace_date': '',
           },]
-
-
-
-
-
-
-   
+    elif testNumber == 7:
+        dataArr = [{
+          "id":testid,
+          "selected":True,
+          'null_num': 'nothing',
+          'replace_num': '',
+          'null_string': '',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },
+          {
+          "id":testid+1,
+          "selected":False,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': '',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },
+          {
+          "id":testid+2,
+          "selected":True,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': '',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },
+          {
+          "id":testid+3,
+          "selected":False,
+          'null_num': '',
+          'replace_num': '',
+          'null_string': '',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },
+          { 
+          "id":testid+4,
+          "selected":True,
+          'null_num': 'replace',
+          'replace_num': 'Avg',
+          'null_string': '',
+          'replace_string': '',
+          'null_date': '',
+          'replace_date': '',
+          },]
 
     return dataArr

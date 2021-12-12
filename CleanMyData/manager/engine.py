@@ -33,7 +33,6 @@ class Engine:
         file_headers = Header.objects.filter(document=self.document)
         panDataframe = self.dataframe.toPandas()
         for header in file_headers:
-            print(f"header in cleanMyData: {header.__dict__}")
             print(f"header_pref in cleanMyData: {header.header_preference}")
             if header.selected == False:
                 continue

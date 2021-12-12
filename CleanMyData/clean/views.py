@@ -12,23 +12,18 @@ from pyspark.sql import SparkSession
 
 from time import process_time
 
-
 spark = SparkSession.builder.appName('preferences').getOrCreate()
 
 
 def frontpage_view(request):
     if request.method == 'POST':
         form = UploadForm(request.POST, request.FILES)
-        print(f"form: {form}")
         
         if form.is_valid():
             upload = Upload.objects.create()
-
             documents = request.FILES.getlist('documents')
-            print(f"documents: {documents}")
             for d in documents:
                 document = Document.objects.create(file=d, is_wrangled=False, upload=upload)
-                print(f"d: {d}")
 
                 #MAKE HEADER OBJECTS
                 engine = Engine(spark=spark, fileModel=document)
@@ -52,28 +47,35 @@ def frontpage_view(request):
     
 
 def success_view(request):
-    print(request)
     #start timer here
     start_time = process_time()
     uploads = Upload.objects.all()
+    wrangledFilePath = ""
 
     #DO THIS ASYNC PLEASE
     for upload in uploads:
         documents = Document.objects.filter(upload=upload)
         for document in documents:
-            print(f"document in success view: {document.__dict__}")
-            print(f"document header: {document.headers}")
             if document.is_wrangled == False:
                 engine = Engine(spark, document)
                 engine.cleanMyData()
                 document.is_wrangled = True
                 document.save()
+                wrangledFilePath = document.file_name
 
     uploads = Upload.objects.all().order_by('-id')
 
     #end timer here
     end_time = process_time()
+    time_taken = end_time - start_time
     print(f"time start: {start_time}\ntime end: {end_time}\ntotal time: {end_time - start_time}")
+    
+    outputFile = open('output_file.txt', 'a')
+
+    outputFile.write(f"{wrangledFilePath} took {time_taken} seconds\n")
+    outputFile.close()
+    
+    print(wrangledFilePath)
 
     return render(request, "success.html", {
         "uploads": uploads,
@@ -97,7 +99,6 @@ def headerChoice_view(request, pk):
                 'null_date': form.cleaned_data['null_date'],
                 'replace_date': form.cleaned_data['replace_date'],
             }
-            print(f"data in headerChoice: {data}----------------------------------------")
             
             header = Header.objects.get(id=data['id'])
             header.selected = data['selected']
