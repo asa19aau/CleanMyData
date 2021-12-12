@@ -111,6 +111,7 @@ def headerChoice_view(request, pk):
                 'null_date': form.cleaned_data['null_date'],
                 'replace_date': form.cleaned_data['replace_date'],
             }
+            print(f"data in headerChoice: {data}----------------------------------------")
             
             header = Header.objects.get(id=data['id'])
             header.selected = data['selected']
