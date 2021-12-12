@@ -50,7 +50,7 @@ class Engine:
                     panDataframe = uc.weightConversion()
                 else:
                     pass
-            self.dataframe = self.spark.createDataFrame(panDataframe)
+        self.dataframe = self.spark.createDataFrame(panDataframe)
         fileWriter(self.spark, self.document.file_path, self.document.file_extension, self.dataframe)
 
 
