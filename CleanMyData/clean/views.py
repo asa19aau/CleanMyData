@@ -154,3 +154,17 @@ def headerChoice_view(request, pk):
     
 def help_view(request):
     return render(request, "help.html")
+
+def merge_view(request):
+    documents = request.POST.getlist('document')
+
+    if len(documents) <= 1:
+        return HttpResponseRedirect("/success/")
+
+    obj = Document.objects.filter(id__in=documents)
+
+    print(obj)
+
+    return render(request, "merge_files.html", {
+        "documents": obj,
+    })
