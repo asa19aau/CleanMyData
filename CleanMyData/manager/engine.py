@@ -33,22 +33,23 @@ class Engine:
         file_headers = Header.objects.filter(document=self.document)
         panDataframe = self.dataframe.toPandas()
         for header in file_headers:
-            currentType = header.header_preference.current_type
-            desiredType = header.header_preference.desired_type
-            if currentType == 'NON':
-                genericCleaner = Module(header, panDataframe)
-                panDataframe = genericCleaner.runCleaner()
-            elif currentType == 'C' or currentType == 'K' or currentType == 'F':
-                uc = SimpleUnitConversion(header, panDataframe)
-                panDataframe = uc.temperatureConversion()
-            elif currentType == 'KM' or currentType == 'MI':
-                uc = SimpleUnitConversion(header, panDataframe)
-                panDataframe = uc.distanceConversion()
-            elif currentType == 'KG' or currentType == 'LB':
-                uc = SimpleUnitConversion(header, panDataframe)
-                panDataframe = uc.weightConversion()
-            else:
-                pass
+            if header.selected == True:
+                currentType = header.header_preference.current_type
+                desiredType = header.header_preference.desired_type
+                if currentType == 'NON':
+                    genericCleaner = Module(header, panDataframe)
+                    panDataframe = genericCleaner.runCleaner()
+                elif currentType == 'C' or currentType == 'K' or currentType == 'F':
+                    uc = SimpleUnitConversion(header, panDataframe)
+                    panDataframe = uc.temperatureConversion()
+                elif currentType == 'KM' or currentType == 'MI':
+                    uc = SimpleUnitConversion(header, panDataframe)
+                    panDataframe = uc.distanceConversion()
+                elif currentType == 'KG' or currentType == 'LB':
+                    uc = SimpleUnitConversion(header, panDataframe)
+                    panDataframe = uc.weightConversion()
+                else:
+                    pass
         self.dataframe = self.spark.createDataFrame(panDataframe)
         fileWriter(self.spark, self.document.file_path, self.document.file_extension, self.dataframe)
 
