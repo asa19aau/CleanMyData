@@ -136,7 +136,6 @@ def headerChoice_view(request, pk):
 
     for document in documents: 
         if document.id == pk:
-            print('You working on this rn')
             if document != documents.last():
                 next_document = document.id + 1
 
