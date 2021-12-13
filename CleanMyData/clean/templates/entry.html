@@ -1,8 +1,8 @@
 {% extends "general.html" %}
 
 {% block content %}
-    <h2 style="text-align: center;">CleanMyData</h2>
-    <div style="text-align: center;">
+    <h2 style="letter-spacing: 2.5px; text-transform: uppercase;">Clean My Data</h2>
+    <div>
         A semester project by CS-21-DAT-5-02
     </div>
     <br>
@@ -13,16 +13,14 @@
         <form class=main action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {% for entry in form %}
-            <div>
-                {{ entry.label_tag }}
-            </div>
+
             <div>
                 {{entry}}
             </div>
             <br>
             {% endfor %}
-            <button>
-                Upload
+            <button type="submit" class="button">
+                &emsp;Upload&emsp;
             </button>
         </form>
     </div>
@@ -31,5 +29,6 @@
     <br><br>
     <hr>
 
-    <h5><a href="/success">Go to success page</a></h5>
+    <br>
+    <a href="/success">Go to success page</a>
 {% endblock %}

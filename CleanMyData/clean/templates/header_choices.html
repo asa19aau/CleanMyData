@@ -2,12 +2,14 @@
 
 {% block content %}
 
-<h1>Select your desired fields. </h1>
-<h5>The fields that you select will expand and you may choose how you wish to handle NULL values. The fields that you do not selected will not have data wrangling performed on them.</h5>
-<div class='grid-container'></div>
+<h1 style="text-transform: uppercase; letter-spacing: 2.0px;">Select your desired fields. </h1>
+<h5 style="font-size: 16px; letter-spacing: 1.1px;">The fields that you select will expand and you may choose how you wish to handle NULL values. The fields that you do not selected will not have data wrangling performed on them.</h5>
+<br>
     {% for header in header_list %}
-    <h4>{{header.id}} | {{header.name}}</h4>
-        <div id={{ header.id }}>
+    
+        <div class="document" id={{ header.id }}>
+            <p style="font-size: 16px; letter-spacing: 1.2px; font-weight: 900; text-transform: uppercase;">{{ header.name }}</p>
+
             <form class=main action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -156,25 +158,23 @@
                 <input type="text" name="id" value="{{ header.id }}" style="visibility: hidden;">
             </form>
         </div>       
-        <br>
-        <hr>
     {% endfor %}
 </div>
 
 {% if next_document %}
-<div style="text-align: right;"> 
+<div class="right"> 
     <a href="/header-choices/{{ next_document }}">
-        <button>
-            Next file
+        <button class="button">
+            &emsp;Next file&emsp;
         </button>
     </a> 
 </div>
 
 {% else %}
-<div style="text-align: right;"> 
+<div class="right"> 
     <a href="/success/">
-        <button>
-            Clean the documents
+        <button class="button">
+            &emsp;Clean the documents&emsp;
         </button>
     </a> 
 </div>

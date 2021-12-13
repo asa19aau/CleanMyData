@@ -63,6 +63,7 @@ def success_view(request):
     
     return render(request, "success.html", {
         "uploads": uploads,
+        "total_documents": Document.objects.all().count(),
     })
     
       
@@ -136,7 +137,6 @@ def headerChoice_view(request, pk):
 
     for document in documents: 
         if document.id == pk:
-            print('You working on this rn')
             if document != documents.last():
                 next_document = document.id + 1
 

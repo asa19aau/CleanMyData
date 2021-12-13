@@ -44,31 +44,84 @@
 
 <style>
     html{
-        background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        background-image: linear-gradient(60deg, #29323c 0%, #485563 100%);
+        font-family: 'Roboto', Geneva, Tahoma, sans-serif;
         min-height: 100vh;
     }
 
     body{
-        margin: 10%;
-        padding-left: 10%;
-        padding-top: 5%;
-        padding-right: 10%;
-        padding-bottom: 5%;
-        background-color: whitesmoke;
+        margin: 5% 15% 5% 15%;
+        padding: 4% 10% 4% 10%;
+        border-radius: 15px;
+        background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+
         box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5); 
         -webkit-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5); 
         -moz-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5); 
     }
 
+    .button {
+        /* width: 140px; */
+        height: 45px;
+        font-family: 'Roboto', sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        font-weight: 500;
+        color: #000;
+        background-color: #fff;
+        border: none;
+        border-radius: 45px;
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease 0s;
+        cursor: pointer;
+        outline: none;
+        }
+
+    .button:hover {
+        background-color: #2EE59D;
+        box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+        color: #fff;
+        transform: translateY(-7px);
+    }
+
     .chosen { display: initial; }
     .notChosen { display: none; }
+
+    .document{
+        background-color: white;
+        padding: 10px;
+        padding-left: 30px;
+        padding-bottom: 20px;
+        margin: 20px;
+        border-radius: 10px;
+        box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2); 
+        -webkit-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2); 
+        -moz-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2); 
+    }
+
+    .grid-container{
+        display: grid;
+        /* grid-column-gap: 50px; */
+        grid-template-columns: 80% 10% 10%;
+
+    }
+
+    .grid-item{
+        overflow: hidden;
+    }
+
+    .right{
+        float:right;
+        padding-right: 20px;
+    }
+
 </style>
 <body>
-    <div style="text-align: right;">
+    <div class="right">
         <a href="/help" target="_blank">
-            <button>
-                Help
+            <button class="button">
+                &emsp;Help&emsp;
             </button> 
         </a>
     </div>
