@@ -63,6 +63,7 @@ def success_view(request):
     
     return render(request, "success.html", {
         "uploads": uploads,
+        "total_documents": Document.objects.all().count(),
     })
     
       
