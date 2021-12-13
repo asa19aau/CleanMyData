@@ -50,11 +50,8 @@
     }
 
     body{
-        margin: 10%;
-        padding-left: 10%;
-        padding-top: 5%;
-        padding-right: 10%;
-        padding-bottom: 5%;
+        margin: 5% 15% 5% 15%;
+        padding: 4% 10% 4% 10%;
         border-radius: 15px;
         background-color: whitesmoke;
         box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5); 
@@ -89,6 +86,16 @@
 
     .chosen { display: initial; }
     .notChosen { display: none; }
+
+    .grid-container{
+        display: grid;
+        /* grid-column-gap: 50px; */
+        grid-template-columns: 350px 50px 50px
+    }
+
+    .grid-item{
+        overflow: hidden;
+    }
 </style>
 <body>
     <div style="text-align: right;">
