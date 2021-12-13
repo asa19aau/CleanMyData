@@ -67,6 +67,11 @@ class Header(models.Model):
         date_types = ['date']
         return self.type in date_types
 
+    @property
+    def is_boolean(self):
+        boolean_types = ['boolean']
+        return self.type in boolean_types
+
 
 class HeaderPreference(models.Model):
     id = models.AutoField(primary_key=True)
