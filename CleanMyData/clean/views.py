@@ -148,6 +148,7 @@ def headerChoice_view(request, pk):
         "form": form,
         "header_list": headers,
         "file_id": pk,
+        "document": Document.objects.get(id=pk),
         "next_document": next_document
     })
 
@@ -156,15 +157,45 @@ def help_view(request):
     return render(request, "help.html")
 
 def merge_view(request):
-    documents = request.POST.getlist('document')
 
-    if len(documents) <= 1:
+    if request.method == 'POST':
+        documents = request.POST.getlist('document')
+
+        if len(documents) <= 1:
+            return HttpResponseRedirect("/success/")
+
+        obj = Document.objects.filter(id__in=documents).order_by('-id')
+
+        return render(request, "merge_files.html", {
+            "documents": obj,
+        })
+
+    return HttpResponseRedirect("/success/")
+
+def merge_documents_view(request, pk):
+
+    if request.method == 'POST':
+        document = Document.objects.get(id=pk)
+        upload = document.upload
+        documents = upload.documents
+
+        header_relations = request.POST.getlist('relation')
+
+        for rel in header_relations:
+            if rel != 'none':
+                print(rel)
+                master_header = Header.objects.get(id=int(rel.split(':')[0]))
+                subscribing_header = Header.objects.get(id=int(rel.split(':')[1]))
+                print(master_header)
+                print(subscribing_header)
+
+
+        
+
+
         return HttpResponseRedirect("/success/")
 
-    obj = Document.objects.filter(id__in=documents)
+    return HttpResponseRedirect("/success/")
 
-    print(obj)
 
-    return render(request, "merge_files.html", {
-        "documents": obj,
-    })
+    

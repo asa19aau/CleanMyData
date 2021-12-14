@@ -7,46 +7,57 @@
 
 <br>
 
-{% for document in documents %}
-<p style="font-size: 24px; font-family: 'Roboto'; letter-spacing: 2.5px; font-weight: 900; text-transform: uppercase;">{{ forloop.counter }} - {{ document.file_name }}</p>
-    <div class="document_container">
-        {% for header in document.headers.all %}
-            <div class="header_item" style="text-align: center;">
-                <p style="font-size: 14px; font-family: 'Roboto'; letter-spacing: 1.5px;" >{{ header.name }}</p>
-                <select style="width: 80%; text-align: center;" name="relation" id="cars">
-                    <option value="none">None</option>
-                    {% for docu in documents %}
+<form action="/merge/documents/{{ documents.0.id }}" method="post">
+    {% csrf_token %}
+    {% for document in documents %}
+        <p style="font-size: 24px; font-family: 'Roboto'; letter-spacing: 2.5px; font-weight: 900; text-transform: uppercase;">{{ forloop.counter }} - {{ document.file_name }}</p>
+            <div class="document_container">
+                {% for header in document.headers.all %}
+                    <div class="header_item" style="text-align: center;">
+                        <p style="font-size: 14px; font-family: 'Roboto'; letter-spacing: 1.5px;" >{{ header.name }}</p>
+
+                        {% if forloop.parentloop.first %}
                             
-                        {% if docu != document %}
+                            {% for docu in documents %}
+                                    
+                                {% if docu != document %}
+                                    <select style="width: 80%; text-align: center;" name="relation" id="cars">
+                                    <option value="none">None</option>
 
-                            {% for head in docu.headers.all %}
+                                    {% for head in docu.headers.all %}
 
-                                {% if head.type == header.type %}
+                                        {% if head.type == header.type %}
 
-                                    <option value="{{ head.id }}">{{forloop.parentloop.counter}} - {{ head.name }}</option>
-                                
+                                            <option value="{{ header.id }}:{{ head.id }}">{{forloop.parentloop.counter}} - {{ head.name }}</option>
+                                        
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                    </select>
+
                                 {% endif %}
 
                             {% endfor %}
+                        
+                        <br><br>
 
-                        {% endif %}
+                    {% endif %}
 
-                    {% endfor %}
-                </select>
-                <br><br>
-            </div>
-        {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <br><br>
+    {% endfor %}
+
+
+    <br>
+    <div class="right">
+        <button type="submit" class="button">
+            &emsp;Merge selected documents&emsp;
+        </button>
     </div>
-
-    <br><br>
-{% endfor %}
-
-
-<br>
-<div class="right">
-    <button type="submit" class="button">
-        &emsp;Merge selected documents&emsp;
-    </button>
-</div>
+</form>
 <br>
 {% endblock %}
