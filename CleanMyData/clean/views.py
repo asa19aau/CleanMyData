@@ -108,7 +108,7 @@ def headerChoice_view(request, pk):
                     header.header_preference.null_choice_string = data['null_string']
                     data['replace_string'] = ''
 
-                if data['null_string'] != 'replace':
+                if data['null_string'] == 'replace':
                     header.header_preference.null_choice_string = data['replace_string']
 
                 else:
@@ -143,10 +143,6 @@ def headerChoice_view(request, pk):
         if document.id == pk:
             if document != documents.last():
                 next_document = document.id + 1
-
-    print(next_document)
-
-
 
     return render(request, "header_choices.html", {
         "form": form,
