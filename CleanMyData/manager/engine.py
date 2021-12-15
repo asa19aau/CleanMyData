@@ -54,6 +54,7 @@ class Engine:
         fileWriter(self.spark, self.document.file_path, self.document.file_extension, self.dataframe)
 
 
+    #Add rows
     def unifyDataframes(self, firstFile, secondFile):
         if isinstance(firstFile, DataFrame):
             firstDataframe = firstFile
@@ -68,7 +69,7 @@ class Engine:
         if len(firstDataframe.columns) == len(secondDataframe.columns):
             return firstDataframe.union(secondDataframe)
 
-
+    #Add columns
     def joinDataframes(self, firstFile, secondFile, joinOn):
         if isinstance(firstFile, DataFrame):
             firstDataframe = firstFile

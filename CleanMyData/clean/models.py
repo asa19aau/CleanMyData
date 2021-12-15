@@ -18,6 +18,7 @@ class Document(models.Model):
     id = models.AutoField(primary_key=True)
     file = models.FileField(upload_to="media", null=False, blank=False, validators=[validate_file_extension])
     is_wrangled = models.BooleanField(default=False)
+    # is_merged = models.BooleanField(default=False)
 
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE, related_name='documents')
 

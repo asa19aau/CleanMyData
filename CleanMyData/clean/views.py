@@ -1,10 +1,14 @@
+from re import sub
 from django.http.response import HttpResponse
 from django.shortcuts import render
+from manager.fileWriter import fileWriter
 from manager.engine import Engine
 from clean.forms.form import HeaderForm, UploadForm
 from clean.models import Upload, Document, HeaderPreference, Header
 from django.http import HttpResponseRedirect
 
+from os import listdir
+from django.conf import settings    
 
 import pyspark
 from pyspark import SparkContext
@@ -104,7 +108,7 @@ def headerChoice_view(request, pk):
                     header.header_preference.null_choice_string = data['null_string']
                     data['replace_string'] = ''
 
-                if data['null_string'] != 'replace':
+                if data['null_string'] == 'replace':
                     header.header_preference.null_choice_string = data['replace_string']
 
                 else:
@@ -140,14 +144,11 @@ def headerChoice_view(request, pk):
             if document != documents.last():
                 next_document = document.id + 1
 
-    print(next_document)
-
-
-
     return render(request, "header_choices.html", {
         "form": form,
         "header_list": headers,
         "file_id": pk,
+        "document": Document.objects.get(id=pk),
         "next_document": next_document
     })
 
@@ -156,15 +157,77 @@ def help_view(request):
     return render(request, "help.html")
 
 def merge_view(request):
-    documents = request.POST.getlist('document')
 
-    if len(documents) <= 1:
-        return HttpResponseRedirect("/success/")
+    if request.method == 'POST':
+        documents = request.POST.getlist('document')
 
-    obj = Document.objects.filter(id__in=documents)
+        if len(documents) <= 1:
+            return HttpResponseRedirect("/success/")
 
-    print(obj)
+        obj = Document.objects.filter(id__in=documents).order_by('-id')
 
-    return render(request, "merge_files.html", {
-        "documents": obj,
-    })
+        return render(request, "merge_files.html", {
+            "documents": obj,
+        })
+
+    return HttpResponseRedirect("/success/")
+
+
+def find_filenames( path_to_dir, suffix ):
+    filenames = listdir(path_to_dir)
+    return [ filename for filename in filenames if filename.endswith( suffix ) ]
+
+
+def merge_documents_view(request, pk):
+    if request.method == 'POST':
+        document = Document.objects.get(id=pk)
+        upload = document.upload
+        documents = upload.documents
+
+        header_relations = request.POST.getlist('relation')
+
+        engines = []
+
+        for docu in documents.all():
+            if docu is not document:
+                engines.append(Engine(spark, docu))
+
+        dataframes = []
+
+        for rel in header_relations:
+            if rel != 'none':
+                master_header = Header.objects.get(id=int(rel.split(':')[0]))
+                subscribing_header = Header.objects.get(id=int(rel.split(':')[1]))
+
+                for engine in engines:
+                        for header in engine.document.headers.all():
+                            if header.id == subscribing_header.id:
+                                dataframes.append(engine.dataframe.withColumnRenamed(subscribing_header.name, master_header.name))
+
+        unified_data = engines[0].dataframe
+
+        for data in dataframes:
+            unified_data = unified_data.union(data)
+
+        fileWriter(spark=spark, filePath='merged', fileExtension=engines[0].document.file_extension, dataframe=unified_data)
+        merged_files = find_filenames('merged', engines[0].document.file_extension)
+        file_to_send = open("merged/" + merged_files[-1], "r")
+        
+        response = HttpResponse(file_to_send)
+        response['Content-Disposition'] = 'attachment; filename="' + merged_files[-1] + '"'
+        return response
+
+    return HttpResponseRedirect("/success/")
+
+
+def download_view(request, pk):
+    document = Document.objects.get(id=pk)
+
+    merged_files = find_filenames(document.file_path + '/', document.file_extension)
+    file_to_send = open(document.file_path + '/' + merged_files[-1], "r")
+
+    response = HttpResponse(file_to_send)
+    response['Content-Disposition'] = 'attachment; filename="' + merged_files[-1] + '"'
+    return response
+
+
