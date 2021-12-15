@@ -19,46 +19,55 @@ class TestExperiment(TestCase):
         self.dataIdStart = 1
   
     def test_base_clean(self):
-        for i in range(3):
+        for i in range(10):
             performTest(0, getDataArr(0, self.dataIdStart), "Base", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(1, getDataArr(0, self.dataIdStart), "Base", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(2, getDataArr(0, self.dataIdStart), "Base", i, self.request)
+            self.dataIdStart += 5
+        for i in range(10):
+            performTest(3, getDataArr(0, self.dataIdStart), "Base", i, self.request)
+            self.dataIdStart += 5
+        for i in range(10):
+            performTest(4, getDataArr(0, self.dataIdStart), "Base", i, self.request)
+            self.dataIdStart += 5
+        for i in range(10):
+            performTest(5, getDataArr(0, self.dataIdStart), "Base", i, self.request)
             self.dataIdStart += 5
 
     def test_1_remove_null_clean(self):
-        for i in range(3):
+        for i in range(10):
             performTest(0, getDataArr(1, self.dataIdStart), "One", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(1, getDataArr(1, self.dataIdStart), "One", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(2, getDataArr(1, self.dataIdStart), "One", i, self.request)
             self.dataIdStart += 5
 
     def test_2_remove_null_dirty(self):
-        for i in range(3):
+        for i in range(10):
             performTest(3, getDataArr(2, self.dataIdStart), "Two", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(4, getDataArr(2, self.dataIdStart), "Two", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(5, getDataArr(2, self.dataIdStart), "Two", i, self.request)
             self.dataIdStart += 5
 
     def test_3_replace_null_avg_dirty(self):
-        for i in range(3):
+        for i in range(10):
             performTest(3, getDataArr(3, self.dataIdStart), "Three", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(4, getDataArr(3, self.dataIdStart), "Three", i, self.request)
             self.dataIdStart += 5
-        for i in range(3):
+        for i in range(10):
             performTest(5, getDataArr(3, self.dataIdStart), "Three", i, self.request)
             self.dataIdStart += 5
 
