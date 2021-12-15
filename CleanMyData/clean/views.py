@@ -8,6 +8,7 @@ from clean.models import Upload, Document, HeaderPreference, Header
 from django.http import HttpResponseRedirect
 
 from os import listdir
+from django.conf import settings    
 
 import pyspark
 from pyspark import SparkContext
@@ -182,7 +183,6 @@ def find_filenames( path_to_dir, suffix ):
 
 
 def merge_documents_view(request, pk):
-
     if request.method == 'POST':
         document = Document.objects.get(id=pk)
         upload = document.upload
@@ -213,22 +213,25 @@ def merge_documents_view(request, pk):
         for data in dataframes:
             unified_data = unified_data.union(data)
 
-
         fileWriter(spark=spark, filePath='merged', fileExtension=engines[0].document.file_extension, dataframe=unified_data)
         merged_files = find_filenames('merged', engines[0].document.file_extension)
         file_to_send = open("merged/" + merged_files[-1], "r")
         
-
-
         response = HttpResponse(file_to_send)
         response['Content-Disposition'] = 'attachment; filename="' + merged_files[-1] + '"'
         return response
 
-
-        return HttpResponseRedirect("/success/")
-
     return HttpResponseRedirect("/success/")
 
 
+def download_view(request, pk):
+    document = Document.objects.get(id=pk)
+
+    merged_files = find_filenames(document.file_path + '/', document.file_extension)
+    file_to_send = open(document.file_path + '/' + merged_files[-1], "r")
+
+    response = HttpResponse(file_to_send)
+    response['Content-Disposition'] = 'attachment; filename="' + merged_files[-1] + '"'
+    return response
 
 
