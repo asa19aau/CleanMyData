@@ -185,28 +185,30 @@ def merge_documents_view(request, pk):
         documents = upload.documents
 
         header_relations = request.POST.getlist('relation')
-
+    
         engines = []
 
         for docu in documents.all():
             if docu is not document:
                 engines.append(Engine(spark, docu))
-
+        
         dataframes = []
+
+        subscribing_header = []
 
         for rel in header_relations:
             if rel != 'none':
                 master_header = Header.objects.get(id=int(rel.split(':')[0]))
                 subscribing_header = Header.objects.get(id=int(rel.split(':')[1]))
-
-                for engine in engines:
-                        for header in engine.document.headers.all():
-                            if header.id == subscribing_header.id:
-                                dataframes.append(engine.dataframe.withColumnRenamed(subscribing_header.name, master_header.name))
+                
+        for engine in engines:
+            print(engines)
+            if engine.dataframe not in dataframes:
+                dataframes.append(engine.dataframe.withColumnRenamed(subscribing_header.name, master_header.name))
 
         unified_data = engines[0].dataframe
 
-        for data in dataframes:
+        for data in dataframes[1:]:
             unified_data = unified_data.union(data)
 
         fileWriter(spark=spark, filePath='merged', fileExtension=engines[0].document.file_extension, dataframe=unified_data)
